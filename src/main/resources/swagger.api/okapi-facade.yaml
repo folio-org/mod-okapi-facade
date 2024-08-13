@@ -413,7 +413,7 @@ paths:
         you may use /_/proxy/modules.
       operationId: announceModules
       tags:
-        - proxy-modules
+        - proxy-module
       requestBody:
         content:
           application/json:
@@ -427,8 +427,8 @@ paths:
           schema:
             default: true
             type: boolean
-        - $ref: '#/components/parameters/trait_versionFilters_preRelease'
-        - $ref: '#/components/parameters/trait_versionFilters_npmSnapshot'
+        - $ref: '#/components/parameters/query-pre-release'
+        - $ref: '#/components/parameters/query-npm-snapshot'
   /_/proxy/cleanup/modules:
     post:
       responses:
@@ -451,7 +451,7 @@ paths:
         that release.
       operationId: cleanupModules
       tags:
-        - proxy-modules
+        - proxy-module
       parameters:
         - name: removeDependencies
           in: query
@@ -497,7 +497,7 @@ paths:
         be selected for a specific tenant.
       operationId: announceModule
       tags:
-        - proxy-modules
+        - proxy-module
       requestBody:
         content:
           application/json:
@@ -511,8 +511,8 @@ paths:
           schema:
             default: true
             type: boolean
-        - $ref: '#/components/parameters/trait_versionFilters_preRelease'
-        - $ref: '#/components/parameters/trait_versionFilters_npmSnapshot'
+        - $ref: '#/components/parameters/query-pre-release'
+        - $ref: '#/components/parameters/query-npm-snapshot'
     get:
       responses:
         '200':
@@ -531,7 +531,7 @@ paths:
       description: List all or subset of modules for proxy
       operationId: getAllModules
       tags:
-        - proxy-modules
+        - proxy-module
       parameters:
         - name: dot
           in: query
@@ -585,8 +585,8 @@ paths:
           description: Limit to interface scope (only useful with provide and require)
           schema:
             type: string
-        - $ref: '#/components/parameters/trait_versionFilters_preRelease'
-        - $ref: '#/components/parameters/trait_versionFilters_npmSnapshot'
+        - $ref: '#/components/parameters/query-pre-release'
+        - $ref: '#/components/parameters/query-npm-snapshot'
   /_/proxy/modules/{module_id}:
     get:
       responses:
@@ -602,7 +602,7 @@ paths:
       description: Retrieve descriptor for a particular module
       operationId: getModule
       tags:
-        - proxy-modules
+        - proxy-module
     delete:
       responses:
         '204':
@@ -618,7 +618,7 @@ paths:
         longer be selectable by tenants
       operationId: deleteModule
       tags:
-        - proxy-modules
+        - proxy-module
     parameters:
       - name: module_id
         in: path
@@ -646,7 +646,7 @@ paths:
       description: Create a new tenant
       operationId: createTenant
       tags:
-        - proxy-tenants
+        - proxy-tenant
       requestBody:
         content:
           application/json:
@@ -667,7 +667,7 @@ paths:
       description: List all tenants
       operationId: getAllTenants
       tags:
-        - proxy-tenants
+        - proxy-tenant
   /_/proxy/tenants/{tenant_id}:
     get:
       responses:
@@ -685,7 +685,7 @@ paths:
       description: Retrieve a tenant
       operationId: getTenant
       tags:
-        - proxy-tenants
+        - proxy-tenant
     put:
       responses:
         '200':
@@ -704,7 +704,7 @@ paths:
       description: Update a tenant
       operationId: updateTenant
       tags:
-        - proxy-tenants
+        - proxy-tenant
       requestBody:
         content:
           application/json:
@@ -727,7 +727,7 @@ paths:
       description: Remove a tenant
       operationId: deleteTenant
       tags:
-        - proxy-tenants
+        - proxy-tenant
     parameters:
       - name: tenant_id
         in: path
@@ -759,9 +759,9 @@ paths:
       description: Enable a module for tenant. Only the member 'id' from TenantModuleDescriptor
         is used in this operation. This call will eventually be replaced by the 'install'
         service.
-      operationId: enableModule
+      operationId: enableTenantModule
       tags:
-        - proxy-tenants
+        - proxy-tenant-module
       requestBody:
         content:
           application/json:
@@ -784,9 +784,9 @@ paths:
         '500':
           description: Server Error
       description: Get enabled modules for tenant
-      operationId: getAllEnabledModules
+      operationId: getAllTenantModules
       tags:
-        - proxy-tenants
+        - proxy-tenant-module
       parameters:
         - name: dot
           in: query
@@ -840,8 +840,8 @@ paths:
           description: Limit to interface scope (only useful with provide and require)
           schema:
             type: string
-        - $ref: '#/components/parameters/trait_versionFilters_preRelease'
-        - $ref: '#/components/parameters/trait_versionFilters_npmSnapshot'
+        - $ref: '#/components/parameters/query-pre-release'
+        - $ref: '#/components/parameters/query-npm-snapshot'
     delete:
       responses:
         '204':
@@ -856,9 +856,9 @@ paths:
         '500':
           description: Server Error
       description: Disable modules for tenant
-      operationId: disableModules
+      operationId: disableTenantModules
       tags:
-        - proxy-tenants
+        - proxy-tenant-module
       parameters:
         - name: invoke
           in: query
@@ -904,7 +904,7 @@ paths:
       description: Look up particular module selection
       operationId: getTenantModule
       tags:
-        - proxy-tenants
+        - proxy-tenant-module
     post:
       responses:
         '201':
@@ -929,9 +929,9 @@ paths:
       description: Upgrade a module for a tenant. Enable new module and disable current
         module with new module ID in body and existing ID in path. This call will
         eventually be replaced by the 'install' service.
-      operationId: upgradeModule
+      operationId: upgradeTenantModule
       tags:
-        - proxy-tenants
+        - proxy-tenant-module
       requestBody:
         content:
           application/json:
@@ -971,9 +971,9 @@ paths:
           description: Client Error
       description: Disable a module for a tenant. This call will eventually be replaced
         by the 'install' service.
-      operationId: disableModule
+      operationId: disableTenantModule
       tags:
-        - proxy-tenants
+        - proxy-tenant-module
       parameters:
         - name: invoke
           in: query
@@ -1029,7 +1029,7 @@ paths:
         those that are ongoing.
       operationId: getAllInstallJobs
       tags:
-        - proxy-tenants
+        - proxy-tenant-installation
     delete:
       responses:
         '204':
@@ -1046,7 +1046,7 @@ paths:
       description: Delete all completed install jobs
       operationId: deleteInstallJobs
       tags:
-        - proxy-tenants
+        - proxy-tenant-installation
     post:
       responses:
         '200':
@@ -1088,7 +1088,7 @@ paths:
         by the existing tenants-modules CRUD service.
       operationId: createInstallJob
       tags:
-        - proxy-tenants
+        - proxy-tenant-installation
       requestBody:
         content:
           application/json:
@@ -1096,18 +1096,18 @@ paths:
               $ref: '#/components/schemas/TenantModuleDescriptorList'
         required: true
       parameters:
-        - $ref: '#/components/parameters/trait_versionFilters_preRelease'
-        - $ref: '#/components/parameters/trait_versionFilters_npmSnapshot'
-        - $ref: '#/components/parameters/trait_installParameters_async'
-        - $ref: '#/components/parameters/trait_installParameters_deploy'
-        - $ref: '#/components/parameters/trait_installParameters_ignoreErrors'
-        - $ref: '#/components/parameters/trait_installParameters_invoke'
-        - $ref: '#/components/parameters/trait_installParameters_parallel'
-        - $ref: '#/components/parameters/trait_installParameters_purge'
-        - $ref: '#/components/parameters/trait_installParameters_reinstall'
-        - $ref: '#/components/parameters/trait_installParameters_simulate'
-        - $ref: '#/components/parameters/trait_installParameters_tenantParameters'
-        - $ref: '#/components/parameters/trait_installParameters_depCheck'
+        - $ref: '#/components/parameters/query-pre-release'
+        - $ref: '#/components/parameters/query-npm-snapshot'
+        - $ref: '#/components/parameters/query-install-async'
+        - $ref: '#/components/parameters/query-install-deploy'
+        - $ref: '#/components/parameters/query-install-ignore-errors'
+        - $ref: '#/components/parameters/query-install-invoke'
+        - $ref: '#/components/parameters/query-install-parallel'
+        - $ref: '#/components/parameters/query-install-purge'
+        - $ref: '#/components/parameters/query-install-reinstall'
+        - $ref: '#/components/parameters/query-install-simulate'
+        - $ref: '#/components/parameters/query-install-tenant-parameters'
+        - $ref: '#/components/parameters/query-install-dep-check'
     parameters:
       - name: tenant_id
         in: path
@@ -1135,7 +1135,7 @@ paths:
       description: Get install job status
       operationId: getInstallJob
       tags:
-        - proxy-tenants
+        - proxy-tenant-installation
     delete:
       responses:
         '204':
@@ -1152,7 +1152,7 @@ paths:
       description: Delete install job
       operationId: deleteInstallJob
       tags:
-        - proxy-tenants
+        - proxy-tenant-installation
     parameters:
       - name: install_id
         in: path
@@ -1201,20 +1201,20 @@ paths:
         the upgrade.
       operationId: createUpgradeJob
       tags:
-        - proxy-tenants
+        - proxy-tenant-installation
       parameters:
-        - $ref: '#/components/parameters/trait_versionFilters_preRelease'
-        - $ref: '#/components/parameters/trait_versionFilters_npmSnapshot'
-        - $ref: '#/components/parameters/trait_installParameters_async'
-        - $ref: '#/components/parameters/trait_installParameters_deploy'
-        - $ref: '#/components/parameters/trait_installParameters_ignoreErrors'
-        - $ref: '#/components/parameters/trait_installParameters_invoke'
-        - $ref: '#/components/parameters/trait_installParameters_parallel'
-        - $ref: '#/components/parameters/trait_installParameters_purge'
-        - $ref: '#/components/parameters/trait_installParameters_reinstall'
-        - $ref: '#/components/parameters/trait_installParameters_simulate'
-        - $ref: '#/components/parameters/trait_installParameters_tenantParameters'
-        - $ref: '#/components/parameters/trait_installParameters_depCheck'
+        - $ref: '#/components/parameters/query-pre-release'
+        - $ref: '#/components/parameters/query-npm-snapshot'
+        - $ref: '#/components/parameters/query-install-async'
+        - $ref: '#/components/parameters/query-install-deploy'
+        - $ref: '#/components/parameters/query-install-ignore-errors'
+        - $ref: '#/components/parameters/query-install-invoke'
+        - $ref: '#/components/parameters/query-install-parallel'
+        - $ref: '#/components/parameters/query-install-purge'
+        - $ref: '#/components/parameters/query-install-reinstall'
+        - $ref: '#/components/parameters/query-install-simulate'
+        - $ref: '#/components/parameters/query-install-tenant-parameters'
+        - $ref: '#/components/parameters/query-install-dep-check'
     parameters:
       - name: tenant_id
         in: path
@@ -1242,7 +1242,7 @@ paths:
       description: Get all interfaces for tenant
       operationId: getAllInterfaces
       tags:
-        - proxy-tenants
+        - proxy-tenant-interface
       parameters:
         - name: full
           in: query
@@ -1283,7 +1283,7 @@ paths:
         Use /_/proxy/tenants/{tenant_id}/modules?provide={interface_id} instead.
       operationId: getInterface
       tags:
-        - proxy-tenants
+        - proxy-tenant-interface
       parameters:
         - name: type
           in: query
@@ -1322,7 +1322,7 @@ paths:
       description: Get timers for tenant.
       operationId: getAllTimers
       tags:
-        - proxy-tenants
+        - proxy-tenant-timer
     patch:
       responses:
         '204':
@@ -1342,7 +1342,7 @@ paths:
         reverts timer back to initial values from module.
       operationId: updateTimers
       tags:
-        - proxy-tenants
+        - proxy-tenant-timer
       requestBody:
         content:
           application/json:
@@ -1376,7 +1376,7 @@ paths:
       description: get timer with id given.
       operationId: getTimer
       tags:
-        - proxy-tenants
+        - proxy-tenant-timer
     patch:
       responses:
         '204':
@@ -1396,7 +1396,7 @@ paths:
         module.
       operationId: updateTimer
       tags:
-        - proxy-tenants
+        - proxy-tenant-timer
       requestBody:
         content:
           application/json:
@@ -1456,7 +1456,7 @@ paths:
         remote repositories.
       operationId: pullDescriptors
       tags:
-        - proxy-descriptors
+        - proxy-descriptor
       requestBody:
         content:
           application/json:
@@ -1587,6 +1587,7 @@ paths:
         required: true
         schema:
           type: string
+
 components:
   schemas:
     DeploymentDescriptor:
@@ -1643,7 +1644,7 @@ components:
       $ref: schemas/PullDescriptor.json
   responses: {}
   parameters:
-    trait_versionFilters_preRelease:
+    query-pre-release:
       name: preRelease
       in: query
       description: Whether to use pre-release in operation. "true"&#58; use all modules;
@@ -1655,7 +1656,7 @@ components:
           - 'false'
           - only
         type: string
-    trait_versionFilters_npmSnapshot:
+    query-npm-snapshot:
       name: npmSnapshot
       in: query
       description: Whether to use NPM module snapshots in operation. "true"&#58; use
@@ -1668,21 +1669,21 @@ components:
           - 'false'
           - only
         type: string
-    trait_installParameters_async:
+    query-install-async:
       name: async
       in: query
       description: Whether to install in the background.
       schema:
         default: false
         type: boolean
-    trait_installParameters_deploy:
+    query-install-deploy:
       name: deploy
       in: query
       description: Whether to deploy (or undeploy if disabling).
       schema:
         default: false
         type: boolean
-    trait_installParameters_ignoreErrors:
+    query-install-ignore-errors:
       name: ignoreErrors
       in: query
       description: |
@@ -1695,7 +1696,7 @@ components:
       schema:
         default: false
         type: boolean
-    trait_installParameters_invoke:
+    query-install-invoke:
       name: invoke
       in: query
       description: |
@@ -1706,7 +1707,7 @@ components:
       schema:
         default: 'true'
         type: string
-    trait_installParameters_parallel:
+    query-install-parallel:
       name: parallel
       in: query
       description: |
@@ -1717,34 +1718,34 @@ components:
         default: 1
         minimum: 1
         type: integer
-    trait_installParameters_purge:
+    query-install-purge:
       name: purge
       in: query
       description: Disabled modules will also be purged.
       schema:
         default: false
         type: boolean
-    trait_installParameters_reinstall:
+    query-install-reinstall:
       name: reinstall
       in: query
       description: Whether to install modules even if up-to-update.
       schema:
         default: false
         type: boolean
-    trait_installParameters_simulate:
+    query-install-simulate:
       name: simulate
       in: query
       description: Whether the installation is simulated
       schema:
         default: false
         type: boolean
-    trait_installParameters_tenantParameters:
+    query-install-tenant-parameters:
       name: tenantParameters
       in: query
       description: Parameters for tenant init
       schema:
         type: string
-    trait_installParameters_depCheck:
+    query-install-dep-check:
       name: depCheck
       in: query
       description: |
@@ -1762,6 +1763,3 @@ components:
       description: Okapi trace and timing
       schema:
         type: string
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
