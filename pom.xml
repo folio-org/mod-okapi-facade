@@ -338,7 +338,7 @@
         </configuration>
       </plugin>
 
-      <!--<plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>${maven-checkstyle-plugin.version}</version>
@@ -378,7 +378,7 @@
           <configLocation>folio-checkstyle/checkstyle.xml</configLocation>
           <cacheFile>${basedir}/target/cachefile</cacheFile>
         </configuration>
-      </plugin>-->
+      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

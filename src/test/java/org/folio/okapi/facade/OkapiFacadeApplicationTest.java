@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @ActiveProfiles({"test"})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class FolioSpringTemplateApplicationTest {
+class OkapiFacadeApplicationTest {
 
   @Test
   void shouldAnswerWithTrue() {
