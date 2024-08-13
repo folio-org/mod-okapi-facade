@@ -39,6 +39,9 @@
     <folio-java-checkstyle.version>1.0.1</folio-java-checkstyle.version>
     <applications-poc-tools.version>1.5.5-SNAPSHOT</applications-poc-tools.version>
 
+    <okapi-facade.yaml-file>${project.basedir}/src/main/resources/swagger.api/okapi-facade.yaml
+    </okapi-facade.yaml-file>
+
     <!-- Test dependencies versions -->
     <testcontainer.version>1.20.1</testcontainer.version>
     <instancio.version>5.0.1</instancio.version>
@@ -50,7 +53,7 @@
     <maven-checkstyle-plugin.version>3.4.0</maven-checkstyle-plugin.version>
     <copy-rename-maven-plugin.version>1.0.1</copy-rename-maven-plugin.version>
     <maven-release-plugin.version>3.1.1</maven-release-plugin.version>
-    <openapi-generator.version>7.4.0</openapi-generator.version>
+    <openapi-generator.version>7.7.0</openapi-generator.version>
   </properties>
 
   <dependencies>
@@ -299,10 +302,10 @@
                   <sourceFile>${project.build.directory}/DeploymentDescriptor-template.json</sourceFile>
                   <destinationFile>${project.build.directory}/DeploymentDescriptor.json</destinationFile>
                 </fileSet>
-                <!--<fileSet>
+                <fileSet>
                   <sourceFile>${project.build.directory}/docs/mod-okapi-facade/index.html</sourceFile>
                   <destinationFile>${project.build.directory}/apidocs/mod-okapi-facade.html</destinationFile>
-                </fileSet>-->
+                </fileSet>
               </fileSets>
             </configuration>
           </execution>
@@ -415,73 +418,55 @@
         </executions>
       </plugin>
 
-      <!--
-            <plugin>
-              <groupId>org.openapitools</groupId>
-              <artifactId>openapi-generator-maven-plugin</artifactId>
-              <version>${openapi-generator.version}</version>
-              <executions>
-                <execution>
-                  <id>validator-registry</id>
-                  <goals>
-                    <goal>generate</goal>
-                  </goals>
-                  <configuration>
-                    <inputSpec>${validator-registry.yaml.file}</inputSpec>
-                    <output>${project.build.directory}/generated-sources</output>
-                    <generatorName>spring</generatorName>
-                    <modelPackage>${project.groupId}.pv.domain.dto</modelPackage>
-                    <apiPackage>${project.groupId}.pv.rest.resource</apiPackage>
-                    <generateApis>true</generateApis>
-                    <generateApiTests>true</generateApiTests>
-                    <generateApiDocumentation>true</generateApiDocumentation>
-                    <generateModels>true</generateModels>
-                    <modelsToGenerate>error,errors,parameter,metadata,validationRule,validationRuleCollection</modelsToGenerate>
-                    <generateModelTests>false</generateModelTests>
-                    <generateSupportingFiles>true</generateSupportingFiles>
-                    <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
-                    <generateModelDocumentation>true</generateModelDocumentation>
-                    <configOptions>
-                      <java8>true</java8>
-                      <dateLibrary>java</dateLibrary>
-                      <interfaceOnly>true</interfaceOnly>
-                      <useSpringBoot3>true</useSpringBoot3>
-                      <useTags>true</useTags>
-                    </configOptions>
-
-                  </configuration>
-                </execution>
-                <execution>
-                  <id>validator</id>
-                  <goals>
-                    <goal>generate</goal>
-                  </goals>
-                  <configuration>
-                    <inputSpec>${password-validator.yaml.file}</inputSpec>
-                    <output>${project.build.directory}/generated-sources</output>
-                    <generatorName>spring</generatorName>
-                    <modelPackage>${project.groupId}.pv.domain.dto</modelPackage>
-                    <apiPackage>${project.groupId}.pv.rest.resource</apiPackage>
-                    <generateApis>true</generateApis>
-                    <generateApiTests>true</generateApiTests>
-                    <generateApiDocumentation>true</generateApiDocumentation>
-                    <generateModels>true</generateModels>
-                    <modelsToGenerate>password,validation_result</modelsToGenerate>
-                    <generateModelTests>false</generateModelTests>
-                    <generateSupportingFiles>false</generateSupportingFiles>
-                    <generateModelDocumentation>true</generateModelDocumentation>
-                    <configOptions>
-                      <java8>true</java8>
-                      <dateLibrary>java</dateLibrary>
-                      <interfaceOnly>true</interfaceOnly>
-                      <useSpringBoot3>true</useSpringBoot3>
-                      <useTags>true</useTags>
-                    </configOptions>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin>
-      -->
+      <plugin>
+        <groupId>org.openapitools</groupId>
+        <artifactId>openapi-generator-maven-plugin</artifactId>
+        <version>${openapi-generator.version}</version>
+        <configuration>
+          <skipValidateSpec>true</skipValidateSpec>
+        </configuration>
+        <executions>
+          <execution>
+            <id>okapi-facade-openapi</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <inputSpec>${okapi-facade.yaml-file}</inputSpec>
+              <output>${project.build.directory}/generated-sources</output>
+              <generatorName>spring</generatorName>
+              <modelPackage>${project.groupId}.okapi.facade.domain.dto</modelPackage>
+              <apiPackage>${project.groupId}.okapi.facade.rest.resource</apiPackage>
+              <generateApis>true</generateApis>
+              <generateApiTests>true</generateApiTests>
+              <generateApiDocumentation>true</generateApiDocumentation>
+              <generateModels>true</generateModels>
+              <generateModelTests>false</generateModelTests>
+              <generateSupportingFiles>true</generateSupportingFiles>
+              <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
+              <generateModelDocumentation>true</generateModelDocumentation>
+              <configOptions>
+                <java8>true</java8>
+                <dateLibrary>java</dateLibrary>
+                <interfaceOnly>true</interfaceOnly>
+                <serializableModel>true</serializableModel>
+                <useTags>true</useTags>
+                <useSpringBoot3>true</useSpringBoot3>
+              </configOptions>
+            </configuration>
+          </execution>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <inputSpec>${okapi-facade.yaml-file}</inputSpec>
+              <output>${project.build.directory}/docs/${project.artifactId}</output>
+              <generatorName>html2</generatorName>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
