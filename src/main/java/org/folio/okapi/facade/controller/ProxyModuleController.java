@@ -1,6 +1,5 @@
 package org.folio.okapi.facade.controller;
 
-import jakarta.validation.Valid;
 import java.util.List;
 import org.folio.okapi.facade.domain.dto.ModuleDescriptor;
 import org.folio.okapi.facade.rest.resource.ProxyModuleApi;
@@ -18,7 +17,7 @@ public class ProxyModuleController implements ProxyModuleApi {
   }
 
   @Override
-  public ResponseEntity<Void> announceModules(List<@Valid ModuleDescriptor> moduleDescriptor, Boolean check,
+  public ResponseEntity<Void> announceModules(List<ModuleDescriptor> moduleDescriptor, Boolean check,
     String preRelease, String npmSnapshot) {
     return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
   }
