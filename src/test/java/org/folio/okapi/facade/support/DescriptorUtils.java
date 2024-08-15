@@ -10,12 +10,18 @@ import org.folio.okapi.facade.domain.dto.LaunchDescriptor;
 import org.folio.okapi.facade.domain.dto.ModuleDescriptor;
 import org.folio.okapi.facade.domain.dto.NodeDescriptor;
 import org.folio.okapi.facade.domain.dto.PullDescriptor;
+import org.folio.okapi.facade.domain.dto.RoutingEntry;
 import org.folio.okapi.facade.domain.dto.TenantDescriptor;
+import org.folio.okapi.facade.domain.dto.TenantModuleDescriptor;
+import org.folio.okapi.facade.domain.dto.TimerDescriptor;
 import org.folio.okapi.facade.support.DescriptorUtils.GivenDeploymentDescriptor.DeploymentDescriptorProvider;
 import org.folio.okapi.facade.support.DescriptorUtils.GivenModuleDescriptor.ModuleDescriptorProvider;
 import org.folio.okapi.facade.support.DescriptorUtils.GivenNodeDescriptor.NodeDescriptorProvider;
 import org.folio.okapi.facade.support.DescriptorUtils.GivenPullDescriptor.PullDescriptorProvider;
+import org.folio.okapi.facade.support.DescriptorUtils.GivenRoutingEntry.RoutingEntryProvider;
 import org.folio.okapi.facade.support.DescriptorUtils.GivenTenantDescriptor.TenantDescriptorProvider;
+import org.folio.okapi.facade.support.DescriptorUtils.GivenTenantModuleDescriptor.TenantModuleDescriptorProvider;
+import org.folio.okapi.facade.support.DescriptorUtils.GivenTimerDescriptor.TimerDescriptorProvider;
 import org.instancio.Instancio;
 import org.instancio.Model;
 import org.instancio.junit.Given;
@@ -46,6 +52,14 @@ public class DescriptorUtils {
         random -> random.lowerCaseCharacter() + random.alphanumeric(10).toLowerCase())
       .toModel();
 
+  private static final Model<RoutingEntry> ROUTING_ENTRY_MODEL =
+    Instancio.of(RoutingEntry.class).toModel();
+
+  private static final Model<TimerDescriptor> TIMER_DESCRIPTOR_MODEL =
+    Instancio.of(TimerDescriptor.class)
+      .setModel(field(TimerDescriptor::getRoutingEntry), ROUTING_ENTRY_MODEL)
+      .toModel();
+
   public static DeploymentDescriptor deploymentDescriptor() {
     return Instancio.of(DEPLOYMENT_DESCRIPTOR_MODEL).create();
   }
@@ -64,6 +78,18 @@ public class DescriptorUtils {
 
   public static TenantDescriptor tenantDescriptor() {
     return Instancio.of(TENANT_DESCRIPTOR_MODEL).create();
+  }
+
+  public static TenantModuleDescriptor tenantModuleDescriptor() {
+    return Instancio.create(TenantModuleDescriptor.class);
+  }
+
+  public static RoutingEntry routingEntry() {
+    return Instancio.of(ROUTING_ENTRY_MODEL).create();
+  }
+
+  public static TimerDescriptor timerDescriptor() {
+    return Instancio.of(TIMER_DESCRIPTOR_MODEL).create();
   }
 
   @Given(DeploymentDescriptorProvider.class)
@@ -122,6 +148,42 @@ public class DescriptorUtils {
       @Override
       public Object provide(ElementContext context) {
         return tenantDescriptor();
+      }
+    }
+  }
+
+  @Given(TenantModuleDescriptorProvider.class)
+  @Retention(RetentionPolicy.RUNTIME)
+  public @interface GivenTenantModuleDescriptor {
+
+    class TenantModuleDescriptorProvider implements GivenProvider {
+      @Override
+      public Object provide(ElementContext context) {
+        return tenantModuleDescriptor();
+      }
+    }
+  }
+
+  @Given(RoutingEntryProvider.class)
+  @Retention(RetentionPolicy.RUNTIME)
+  public @interface GivenRoutingEntry {
+
+    class RoutingEntryProvider implements GivenProvider {
+      @Override
+      public Object provide(ElementContext context) {
+        return routingEntry();
+      }
+    }
+  }
+
+  @Given(TimerDescriptorProvider.class)
+  @Retention(RetentionPolicy.RUNTIME)
+  public @interface GivenTimerDescriptor {
+
+    class TimerDescriptorProvider implements GivenProvider {
+      @Override
+      public Object provide(ElementContext context) {
+        return timerDescriptor();
       }
     }
   }

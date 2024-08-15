@@ -1,6 +1,5 @@
 package org.folio.okapi.facade.controller;
 
-import jakarta.validation.Valid;
 import java.util.List;
 import org.folio.okapi.facade.domain.dto.InstallJob;
 import org.folio.okapi.facade.domain.dto.TenantModuleDescriptor;
@@ -14,7 +13,7 @@ public class ProxyTenantInstallationController implements ProxyTenantInstallatio
 
   @Override
   public ResponseEntity<List<TenantModuleDescriptor>> createInstallJob(String tenantId,
-    List<@Valid TenantModuleDescriptor> tenantModuleDescriptor, String preRelease, String npmSnapshot, Boolean async,
+    List<TenantModuleDescriptor> tenantModuleDescriptor, String preRelease, String npmSnapshot, Boolean async,
     Boolean deploy, Boolean ignoreErrors, String invoke, Integer parallel, Boolean purge, Boolean reinstall,
     Boolean simulate, String tenantParameters, Boolean depCheck) {
     return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);

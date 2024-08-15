@@ -29,7 +29,7 @@ class ProxyTenantControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @Test
-  void createTenant(@GivenTenantDescriptor TenantDescriptor descriptor) throws Exception {
+  void createTenant_negative_notImplemented(@GivenTenantDescriptor TenantDescriptor descriptor) throws Exception {
     mockMvc.perform(post("/_/proxy/tenants")
         .header(ACCEPT, APPLICATION_JSON_VALUE)
         .contentType(APPLICATION_JSON)
@@ -38,27 +38,27 @@ class ProxyTenantControllerTest {
   }
 
   @Test
-  void deleteTenant(@Given String tenantId) throws Exception {
+  void deleteTenant_negative_notImplemented(@Given String tenantId) throws Exception {
     mockMvc.perform(delete("/_/proxy/tenants/{tenantId}", tenantId))
       .andExpect(status().isNotImplemented());
   }
 
   @Test
-  void getAllTenants() throws Exception {
+  void getAllTenants_negative_notImplemented() throws Exception {
     mockMvc.perform(get("/_/proxy/tenants")
         .header(ACCEPT, APPLICATION_JSON_VALUE))
       .andExpect(status().isNotImplemented());
   }
 
   @Test
-  void getTenant(@Given String tenantId) throws Exception {
+  void getTenant_negative_notImplemented(@Given String tenantId) throws Exception {
     mockMvc.perform(get("/_/proxy/tenants/{tenantId}", tenantId)
         .header(ACCEPT, APPLICATION_JSON_VALUE))
       .andExpect(status().isNotImplemented());
   }
 
   @Test
-  void updateTenant(@GivenTenantDescriptor TenantDescriptor descriptor) throws Exception {
+  void updateTenant_negative_notImplemented(@GivenTenantDescriptor TenantDescriptor descriptor) throws Exception {
     mockMvc.perform(put("/_/proxy/tenants/{tenantId}", descriptor.getId())
         .header(ACCEPT, APPLICATION_JSON_VALUE)
         .contentType(APPLICATION_JSON)
