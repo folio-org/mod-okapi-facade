@@ -37,7 +37,10 @@
     <hypersistence-utils-hibernate-63.version>3.8.2</hypersistence-utils-hibernate-63.version>
     <folio-spring-support.version>8.1.2</folio-spring-support.version>
     <folio-java-checkstyle.version>1.0.1</folio-java-checkstyle.version>
-    <applications-poc-tools.version>1.5.5-SNAPSHOT</applications-poc-tools.version>
+    <applications-poc-tools.version>1.5.5</applications-poc-tools.version>
+
+    <okapi-facade.yaml-file>${project.basedir}/src/main/resources/swagger.api/okapi-facade.yaml
+    </okapi-facade.yaml-file>
 
     <!-- Test dependencies versions -->
     <testcontainer.version>1.20.1</testcontainer.version>
@@ -50,7 +53,22 @@
     <maven-checkstyle-plugin.version>3.4.0</maven-checkstyle-plugin.version>
     <copy-rename-maven-plugin.version>1.0.1</copy-rename-maven-plugin.version>
     <maven-release-plugin.version>3.1.1</maven-release-plugin.version>
-    <openapi-generator.version>7.4.0</openapi-generator.version>
+    <openapi-generator.version>7.7.0</openapi-generator.version>
+
+    <sonar.exclusions>
+      <!--
+        exclude:
+         - exclude domain classes, which are essentially simple POJO classes
+           most of their body is generated with lombok. here is nothing to test or analyse
+         - rest resources (generated API)
+      -->
+      src/main/java/**/domain/**/*,
+      src/main/java/**/configuration/**/*,
+      src/main/java/**/rest/resource/**/*,
+      src/main/java/**/mapper/**/*,
+      src/main/java/**/integration/**/model/**/*,
+      src/main/java/**/*Application.java
+    </sonar.exclusions>
   </properties>
 
   <dependencies>
@@ -299,10 +317,10 @@
                   <sourceFile>${project.build.directory}/DeploymentDescriptor-template.json</sourceFile>
                   <destinationFile>${project.build.directory}/DeploymentDescriptor.json</destinationFile>
                 </fileSet>
-                <!--<fileSet>
+                <fileSet>
                   <sourceFile>${project.build.directory}/docs/mod-okapi-facade/index.html</sourceFile>
                   <destinationFile>${project.build.directory}/apidocs/mod-okapi-facade.html</destinationFile>
-                </fileSet>-->
+                </fileSet>
               </fileSets>
             </configuration>
           </execution>
@@ -335,7 +353,7 @@
         </configuration>
       </plugin>
 
-      <!--<plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>${maven-checkstyle-plugin.version}</version>
@@ -375,7 +393,7 @@
           <configLocation>folio-checkstyle/checkstyle.xml</configLocation>
           <cacheFile>${basedir}/target/cachefile</cacheFile>
         </configuration>
-      </plugin>-->
+      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -415,73 +433,55 @@
         </executions>
       </plugin>
 
-      <!--
-            <plugin>
-              <groupId>org.openapitools</groupId>
-              <artifactId>openapi-generator-maven-plugin</artifactId>
-              <version>${openapi-generator.version}</version>
-              <executions>
-                <execution>
-                  <id>validator-registry</id>
-                  <goals>
-                    <goal>generate</goal>
-                  </goals>
-                  <configuration>
-                    <inputSpec>${validator-registry.yaml.file}</inputSpec>
-                    <output>${project.build.directory}/generated-sources</output>
-                    <generatorName>spring</generatorName>
-                    <modelPackage>${project.groupId}.pv.domain.dto</modelPackage>
-                    <apiPackage>${project.groupId}.pv.rest.resource</apiPackage>
-                    <generateApis>true</generateApis>
-                    <generateApiTests>true</generateApiTests>
-                    <generateApiDocumentation>true</generateApiDocumentation>
-                    <generateModels>true</generateModels>
-                    <modelsToGenerate>error,errors,parameter,metadata,validationRule,validationRuleCollection</modelsToGenerate>
-                    <generateModelTests>false</generateModelTests>
-                    <generateSupportingFiles>true</generateSupportingFiles>
-                    <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
-                    <generateModelDocumentation>true</generateModelDocumentation>
-                    <configOptions>
-                      <java8>true</java8>
-                      <dateLibrary>java</dateLibrary>
-                      <interfaceOnly>true</interfaceOnly>
-                      <useSpringBoot3>true</useSpringBoot3>
-                      <useTags>true</useTags>
-                    </configOptions>
-
-                  </configuration>
-                </execution>
-                <execution>
-                  <id>validator</id>
-                  <goals>
-                    <goal>generate</goal>
-                  </goals>
-                  <configuration>
-                    <inputSpec>${password-validator.yaml.file}</inputSpec>
-                    <output>${project.build.directory}/generated-sources</output>
-                    <generatorName>spring</generatorName>
-                    <modelPackage>${project.groupId}.pv.domain.dto</modelPackage>
-                    <apiPackage>${project.groupId}.pv.rest.resource</apiPackage>
-                    <generateApis>true</generateApis>
-                    <generateApiTests>true</generateApiTests>
-                    <generateApiDocumentation>true</generateApiDocumentation>
-                    <generateModels>true</generateModels>
-                    <modelsToGenerate>password,validation_result</modelsToGenerate>
-                    <generateModelTests>false</generateModelTests>
-                    <generateSupportingFiles>false</generateSupportingFiles>
-                    <generateModelDocumentation>true</generateModelDocumentation>
-                    <configOptions>
-                      <java8>true</java8>
-                      <dateLibrary>java</dateLibrary>
-                      <interfaceOnly>true</interfaceOnly>
-                      <useSpringBoot3>true</useSpringBoot3>
-                      <useTags>true</useTags>
-                    </configOptions>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin>
-      -->
+      <plugin>
+        <groupId>org.openapitools</groupId>
+        <artifactId>openapi-generator-maven-plugin</artifactId>
+        <version>${openapi-generator.version}</version>
+        <configuration>
+          <skipValidateSpec>true</skipValidateSpec>
+        </configuration>
+        <executions>
+          <execution>
+            <id>okapi-facade-openapi</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <inputSpec>${okapi-facade.yaml-file}</inputSpec>
+              <output>${project.build.directory}/generated-sources</output>
+              <generatorName>spring</generatorName>
+              <modelPackage>${project.groupId}.okapi.facade.domain.dto</modelPackage>
+              <apiPackage>${project.groupId}.okapi.facade.rest.resource</apiPackage>
+              <generateApis>true</generateApis>
+              <generateApiTests>true</generateApiTests>
+              <generateApiDocumentation>true</generateApiDocumentation>
+              <generateModels>true</generateModels>
+              <generateModelTests>false</generateModelTests>
+              <generateSupportingFiles>true</generateSupportingFiles>
+              <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
+              <generateModelDocumentation>true</generateModelDocumentation>
+              <configOptions>
+                <java8>true</java8>
+                <dateLibrary>java</dateLibrary>
+                <interfaceOnly>true</interfaceOnly>
+                <serializableModel>true</serializableModel>
+                <useTags>true</useTags>
+                <useSpringBoot3>true</useSpringBoot3>
+              </configOptions>
+            </configuration>
+          </execution>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <inputSpec>${okapi-facade.yaml-file}</inputSpec>
+              <output>${project.build.directory}/docs/${project.artifactId}</output>
+              <generatorName>html2</generatorName>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -564,4 +564,130 @@
     <tag>HEAD</tag>
   </scm>
 
+  <profiles>
+    <profile>
+      <id>coverage</id>
+
+      <properties>
+        <sonar.exclusions>
+          <!--
+            exclude:
+             - exclude domain classes, which are essentially simple POJO classes
+               most of their body is generated with lombok. here is nothing to test or analyse
+             - rest resources (generated API)
+          -->
+          src/main/java/**/domain/**/*,
+          src/main/java/**/configuration/**/*,
+          src/main/java/**/rest/resource/**/*,
+          src/main/java/**/mapper/**/*,
+          src/main/java/**/integration/**/model/**/*,
+          src/main/java/**/*Application.java
+        </sonar.exclusions>
+        <sonar.coverage.jacoco.xmlReportPaths>
+          target/site/jacoco-aggregate/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
+      </properties>
+
+      <build>
+        <plugins>
+
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.8.12</version>
+            <configuration>
+              <excludes>
+                <exclude>**/domain/**/*</exclude>
+                <exclude>**/cql/**/*</exclude>
+                <exclude>**/configuration/**/*</exclude>
+                <exclude>**/rest/resource/**/*</exclude>
+                <exclude>**/mapper/**/*</exclude>
+                <exclude>**/integration/**/model/**/*</exclude>
+                <exclude>**/*Application.class</exclude>
+              </excludes>
+            </configuration>
+            <executions>
+              <execution>
+                <id>prepare-agent</id>
+                <goals>
+                  <goal>prepare-agent</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>prepare-agent-integration</id>
+                <goals>
+                  <goal>prepare-agent-integration</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>report</id>
+                <goals>
+                  <goal>report</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>report-integration</id>
+                <goals>
+                  <goal>report-integration</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>merge-results</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>merge</goal>
+                </goals>
+                <configuration>
+                  <fileSets>
+                    <fileSet>
+                      <directory>${project.build.directory}</directory>
+                      <includes>
+                        <include>*.exec</include>
+                      </includes>
+                    </fileSet>
+                  </fileSets>
+                  <destFile>${project.build.directory}/jacoco-aggregate.exec</destFile>
+                </configuration>
+              </execution>
+              <execution>
+                <id>post-merge-report</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>report</goal>
+                </goals>
+                <configuration>
+                  <dataFile>${project.build.directory}/jacoco-aggregate.exec</dataFile>
+                  <outputDirectory>${project.reporting.outputDirectory}/jacoco-aggregate</outputDirectory>
+                </configuration>
+              </execution>
+              <execution>
+                <id>check</id>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+                <configuration>
+                  <dataFile>${project.build.directory}/jacoco-aggregate.exec</dataFile>
+                  <haltOnFailure>false</haltOnFailure>
+                  <rules>
+                    <rule>
+                      <element>BUNDLE</element>
+                      <limits>
+                        <limit>
+                          <counter>INSTRUCTION</counter>
+                          <value>COVEREDRATIO</value>
+                          <minimum>80%</minimum>
+                        </limit>
+                      </limits>
+                    </rule>
+                  </rules>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+        </plugins>
+      </build>
+    </profile>
+
+  </profiles>
 </project>

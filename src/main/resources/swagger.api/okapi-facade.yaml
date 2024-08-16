@@ -1,0 +1,1765 @@
+openapi: 3.0.0
+
+info:
+  title: Okapi Core API Facade
+  version: v2.0
+  description: Okapi Core API Facade
+
+servers:
+  - url: http://localhost:8081
+    description: Locally deployed server
+
+paths:
+  /_/deployment/modules:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              description: URI to the descriptor of the deployed instance
+              schema:
+                type: string
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentDescriptor'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      description: |
+        Deploy (launch process, start a container, etc) instance of a
+        particular service, according to the deployment descriptor.
+      operationId: deployModuleInstance
+      tags:
+        - deployment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeploymentDescriptor'
+        required: true
+    get:
+      responses:
+        '200':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentDescriptorList'
+      description: List all deployed instances
+      operationId: getAllDeployedModuleInstances
+      tags:
+        - deployment
+  /_/deployment/modules/{instance_id}:
+    get:
+      responses:
+        '200':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentDescriptor'
+        '404':
+          description: Not Found
+      description: Retrieve deployment descriptor for a particular instance
+      operationId: getDeployedModuleInstance
+      tags:
+        - deployment
+    delete:
+      responses:
+        '204':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+      description: Shutdown instance
+      operationId: deleteDeployedModuleInstance
+      tags:
+        - deployment
+    parameters:
+      - name: instance_id
+        in: path
+        required: true
+        schema:
+          type: string
+  /_/discovery/modules:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              description: URI to the registered instance
+              schema:
+                type: string
+            X-Okapi-Trace:
+              required: false
+              description: Okapi trace and timing
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentDescriptor'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      description: Register instance under a specified service id
+      operationId: createDiscovery
+      tags:
+        - discovery
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeploymentDescriptor'
+        required: true
+    get:
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentDescriptorList'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+      description: Return all instances
+      operationId: getAllDiscoveries
+      tags:
+        - discovery
+    delete:
+      responses:
+        '204':
+          description: OK
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+      description: Delete all instances
+      operationId: deleteAllDiscoveries
+      tags:
+        - discovery
+  /_/discovery/modules/{service_id}:
+    get:
+      responses:
+        '200':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentDescriptorList'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      description: List all instances for a particular service
+      operationId: getDiscoveriesByService
+      tags:
+        - discovery
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+        '404':
+          description: Not Found
+      description: Remove registration for a given instance
+      operationId: deleteDiscoveriesByService
+      tags:
+        - discovery
+    parameters:
+      - name: service_id
+        in: path
+        required: true
+        schema:
+          type: string
+  /_/discovery/modules/{service_id}/{instance_id}:
+    get:
+      responses:
+        '200':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentDescriptor'
+        '404':
+          description: Not Found
+      description: Get registration of a specified instance
+      operationId: getDiscoveryByInstance
+      tags:
+        - discovery
+    delete:
+      responses:
+        '204':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+        '404':
+          description: Not Found
+      description: Remove registration for a given instance
+      operationId: deleteDiscoveryByInstance
+      tags:
+        - discovery
+    parameters:
+      - name: instance_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: service_id
+        in: path
+        required: true
+        schema:
+          type: string
+  "/_/discovery/health":
+    get:
+      responses:
+        '200':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthDescriptorList'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+      description: Get health info for all services
+      operationId: getAllDiscoveryHealth
+      tags:
+        - discovery
+  /_/discovery/health/{service_id}:
+    get:
+      responses:
+        '200':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthDescriptorList'
+        '404':
+          description: Not Found
+      description: Health for all instances for a particular service
+      operationId: getDiscoveryHealthByService
+      tags:
+        - discovery
+    parameters:
+      - name: service_id
+        in: path
+        required: true
+        schema:
+          type: string
+  /_/discovery/health/{service_id}/{instance_id}:
+    get:
+      responses:
+        '200':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthDescriptor'
+        '404':
+          description: Not Found
+      description: Get health for a particular instance
+      operationId: getDiscoveryHealthByInstance
+      tags:
+        - discovery
+    parameters:
+      - name: instance_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: service_id
+        in: path
+        required: true
+        schema:
+          type: string
+  /_/discovery/nodes:
+    get:
+      responses:
+        '200':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeDescriptorList'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+      description: Get list of all nodes
+      operationId: getAllDiscoveryNodes
+      tags:
+        - discovery
+  /_/discovery/nodes/{node_id}:
+    put:
+      responses:
+        '200':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeDescriptor'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      description: Update descriptor of a particular node, only the name can be changed
+      operationId: updateDiscoveryNode
+      tags:
+        - discovery
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NodeDescriptor'
+        required: true
+    get:
+      responses:
+        '200':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeDescriptor'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      description: Get info for one node
+      operationId: getDiscoveryNode
+      tags:
+        - discovery
+    parameters:
+      - name: node_id
+        in: path
+        required: true
+        schema:
+          type: string
+  /_/proxy/import/modules:
+    post:
+      responses:
+        '204':
+          description: OK
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      description: Announce a list of new modules to the proxy. Once successful a
+        module can be selected for a specific tenant. To announce only one module
+        you may use /_/proxy/modules.
+      operationId: announceModules
+      tags:
+        - proxy-module
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModuleList'
+        required: true
+      parameters:
+        - name: check
+          in: query
+          description: Whether to check dependencies
+          schema:
+            default: true
+            type: boolean
+        - $ref: '#/components/parameters/query-pre-release'
+        - $ref: '#/components/parameters/query-npm-snapshot'
+  /_/proxy/cleanup/modules:
+    post:
+      responses:
+        '204':
+          description: OK
+          headers:
+            X-Okapi-Trace:
+              description: Okapi trace and timing
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      description: Remove module snapshot modules descriptors that are obsolete. A
+        module is considered obsolete if it is part of a release that is earlier than
+        N latest releases (saveReleases) and not part of the M latest snapshots in
+        that release.
+      operationId: cleanupModules
+      tags:
+        - proxy-module
+      parameters:
+        - name: removeDependencies
+          in: query
+          description: Force removal of modules that depend on obsolete snapshots
+          schema:
+            default: false
+            type: boolean
+        - name: saveReleases
+          in: query
+          required: true
+          description: The number of latest releases where snapshots are never considered
+            obsolete
+          schema:
+            type: integer
+        - name: saveSnapshots
+          in: query
+          required: true
+          description: The number of latest snapshots that are never considered obsolete
+            (preserved)
+          schema:
+            type: integer
+  /_/proxy/modules:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+            Location:
+              description: URI to the created module instance
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModuleDescriptor'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+      description: Announce new module to the proxy. Once successful a module can
+        be selected for a specific tenant.
+      operationId: announceModule
+      tags:
+        - proxy-module
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModuleDescriptor'
+        required: true
+      parameters:
+        - name: check
+          in: query
+          description: Whether to check dependencies
+          schema:
+            default: true
+            type: boolean
+        - $ref: '#/components/parameters/query-pre-release'
+        - $ref: '#/components/parameters/query-npm-snapshot'
+    get:
+      responses:
+        '200':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModuleList'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+      description: List all or subset of modules for proxy
+      operationId: getAllModules
+      tags:
+        - proxy-module
+      parameters:
+        - name: dot
+          in: query
+          description: If true, return Graphviz DOT content as plain text
+          schema:
+            default: false
+            type: boolean
+        - name: filter
+          in: query
+          description: Filter by module ID
+          schema:
+            type: string
+        - name: full
+          in: query
+          description: Whether full or compact MD should be returned
+          schema:
+            default: false
+            type: boolean
+        - name: latest
+          in: query
+          description: Limit to latest N releases (most likely 1 if given)
+          schema:
+            type: integer
+        - name: order
+          in: query
+          description: Order
+          schema:
+            enum:
+              - desc
+              - asc
+            type: string
+        - name: orderBy
+          in: query
+          description: Order by field
+          schema:
+            type: string
+        - name: provide
+          in: query
+          description: Limit to provided interfaces (each interface name separated by
+            comma)
+          schema:
+            type: string
+        - name: require
+          in: query
+          description: Limit to required interfaces (each interface name separated by
+            comma)
+          schema:
+            type: string
+        - name: scope
+          in: query
+          description: Limit to interface scope (only useful with provide and require)
+          schema:
+            type: string
+        - $ref: '#/components/parameters/query-pre-release'
+        - $ref: '#/components/parameters/query-npm-snapshot'
+  /_/proxy/modules/{module_id}:
+    get:
+      responses:
+        '200':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModuleDescriptor'
+      description: Retrieve descriptor for a particular module
+      operationId: getModule
+      tags:
+        - proxy-module
+    delete:
+      responses:
+        '204':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+      description: Remove module descriptor for a particular module, module will no
+        longer be selectable by tenants
+      operationId: deleteModule
+      tags:
+        - proxy-module
+    parameters:
+      - name: module_id
+        in: path
+        required: true
+        schema:
+          type: string
+  /_/proxy/tenants:
+    post:
+      responses:
+        '201':
+          description: Tenant has been created
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+            Location:
+              description: URI to the created tenant
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantDescriptor'
+        '400':
+          description: Bad Request
+      description: Create a new tenant
+      operationId: createTenant
+      tags:
+        - proxy-tenant
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantDescriptor'
+        required: true
+    get:
+      responses:
+        '200':
+          description: List of tenants in a brief format
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantList'
+      description: List all tenants
+      operationId: getAllTenants
+      tags:
+        - proxy-tenant
+  /_/proxy/tenants/{tenant_id}:
+    get:
+      responses:
+        '200':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantDescriptor'
+        '404':
+          description: Not Found
+      description: Retrieve a tenant
+      operationId: getTenant
+      tags:
+        - proxy-tenant
+    put:
+      responses:
+        '200':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantDescriptor'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+      description: Update a tenant
+      operationId: updateTenant
+      tags:
+        - proxy-tenant
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantDescriptor'
+        required: true
+    delete:
+      responses:
+        '204':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      description: Remove a tenant
+      operationId: deleteTenant
+      tags:
+        - proxy-tenant
+    parameters:
+      - name: tenant_id
+        in: path
+        required: true
+        schema:
+          type: string
+  /_/proxy/tenants/{tenant_id}/modules:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+            Location:
+              description: URI to the enabled module
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantModuleDescriptor'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      description: Enable a module for tenant. Only the member 'id' from TenantModuleDescriptor
+        is used in this operation. This call will eventually be replaced by the 'install'
+        service.
+      operationId: enableTenantModule
+      tags:
+        - proxy-tenant-module
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantModuleDescriptor'
+        required: true
+    get:
+      responses:
+        '200':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModuleList'
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      description: Get enabled modules for tenant
+      operationId: getAllTenantModules
+      tags:
+        - proxy-tenant-module
+      parameters:
+        - name: dot
+          in: query
+          description: If true, return Graphviz DOT content as plain text
+          schema:
+            default: false
+            type: boolean
+        - name: filter
+          in: query
+          description: Filter by module ID
+          schema:
+            type: string
+        - name: full
+          in: query
+          description: Whether full or compact MD should be returned
+          schema:
+            default: false
+            type: boolean
+        - name: latest
+          in: query
+          description: Limit to latest N releases (most likely 1 if given)
+          schema:
+            type: integer
+        - name: order
+          in: query
+          description: Order
+          schema:
+            enum:
+              - desc
+              - asc
+            type: string
+        - name: orderBy
+          in: query
+          description: Order by field
+          schema:
+            type: string
+        - name: provide
+          in: query
+          description: Limit to provided interfaces (each interface name separated by
+            comma)
+          schema:
+            type: string
+        - name: require
+          in: query
+          description: Limit to required interfaces (each interface name separted by
+            comma)
+          schema:
+            type: string
+        - name: scope
+          in: query
+          description: Limit to interface scope (only useful with provide and require)
+          schema:
+            type: string
+        - $ref: '#/components/parameters/query-pre-release'
+        - $ref: '#/components/parameters/query-npm-snapshot'
+    delete:
+      responses:
+        '204':
+          description: OK
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      description: Disable modules for tenant
+      operationId: disableTenantModules
+      tags:
+        - proxy-tenant-module
+      parameters:
+        - name: invoke
+          in: query
+          description: |
+            Whether to invoke for tenant init/permissions/purge. Use
+            "true" to invoke, "false" to not invoke. Any other value
+            is a regular expression that is matched against the module ID.
+            If that pattern matches, invoke is performed (same as "true)".
+          schema:
+            default: 'true'
+            type: string
+        - name: purge
+          in: query
+          description: Disabled modules will also be purged.
+          schema:
+            default: false
+            type: boolean
+        - name: tenantParameters
+          in: query
+          description: Parameters for Tenant init
+          schema:
+            type: string
+    parameters:
+      - name: tenant_id
+        in: path
+        required: true
+        schema:
+          type: string
+  /_/proxy/tenants/{tenant_id}/modules/{module_id}:
+    get:
+      responses:
+        '200':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantModuleDescriptor'
+        '404':
+          description: Not Found
+      description: Look up particular module selection
+      operationId: getTenantModule
+      tags:
+        - proxy-tenant-module
+    post:
+      responses:
+        '201':
+          description: Created
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+            Location:
+              description: URI to the enabled module
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantModuleDescriptor'
+        '400':
+          description: Client Error
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      description: Upgrade a module for a tenant. Enable new module and disable current
+        module with new module ID in body and existing ID in path. This call will
+        eventually be replaced by the 'install' service.
+      operationId: upgradeTenantModule
+      tags:
+        - proxy-tenant-module
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantModuleDescriptor'
+        required: true
+      parameters:
+        - name: invoke
+          in: query
+          description: |
+            Whether to invoke for tenant init/permissions/purge. Use
+            "true" to invoke, "false" to not invoke. Any other value
+            is a regular expression that is matched against the module ID.
+            If that pattern matches, invoke is performed (same as "true)".
+          schema:
+            default: 'true'
+            type: string
+        - name: purge
+          in: query
+          description: Disabled modules will also be purged.
+          schema:
+            default: false
+            type: boolean
+        - name: tenantParameters
+          in: query
+          description: Parameters for Tenant init
+          schema:
+            type: string
+    delete:
+      responses:
+        '204':
+          description: Gone
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+        '400':
+          description: Client Error
+      description: Disable a module for a tenant. This call will eventually be replaced
+        by the 'install' service.
+      operationId: disableTenantModule
+      tags:
+        - proxy-tenant-module
+      parameters:
+        - name: invoke
+          in: query
+          description: |
+            Whether to invoke for tenant init/permissions/purge. Use
+            "true" to invoke, "false" to not invoke. Any other value
+            is a regular expression that is matched against the module ID.
+            If that pattern matches, invoke is performed (same as "true)".
+          schema:
+            default: 'true'
+            type: string
+        - name: purge
+          in: query
+          description: Disabled modules will also be purged.
+          schema:
+            default: false
+            type: boolean
+        - name: tenantParameters
+          in: query
+          description: Parameters for Tenant init
+          schema:
+            type: string
+    parameters:
+      - name: module_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: tenant_id
+        in: path
+        required: true
+        schema:
+          type: string
+  /_/proxy/tenants/{tenant_id}/install:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstallJobList'
+        '400':
+          description: User error
+        '404':
+          description: Tenant not Found
+        '500':
+          description: User error
+      description: Retrieve information about all install/upgrade jobs - including
+        those that are ongoing.
+      operationId: getAllInstallJobs
+      tags:
+        - proxy-tenant-installation
+    delete:
+      responses:
+        '204':
+          description: OK
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+        '400':
+          description: Bad Request
+        '404':
+          description: Tenant not Found
+        '500':
+          description: Server Error
+      description: Delete all completed install jobs
+      operationId: deleteInstallJobs
+      tags:
+        - proxy-tenant-installation
+    post:
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantModuleDescriptorList'
+        '201':
+          description: Install job created (async mode)
+          headers:
+            Location:
+              description: URI to the install job
+              schema:
+                type: string
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantModuleDescriptorList'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      description: Enable, disable or upgrade one or more modules for tenant. The
+        request body and response body is of the same type TenantModuleDescriptorList.
+        This list includes one or more modules to be enabled, disabled or upgraded.
+        The request is the initial desired changes and the response is the list of
+        changes that must be fulfilled to satisfy dependencies. This service will
+        eventually partially replace /_/proxy/tenants/{tenant}/modules . It also allows
+        enabling multiple modules in one transaction. For simulate=true, the response,
+        can be viewed as a recipe for what must be deployed (optionally) and enabled/disabled
+        by the existing tenants-modules CRUD service.
+      operationId: createInstallJob
+      tags:
+        - proxy-tenant-installation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantModuleDescriptorList'
+        required: true
+      parameters:
+        - $ref: '#/components/parameters/query-pre-release'
+        - $ref: '#/components/parameters/query-npm-snapshot'
+        - $ref: '#/components/parameters/query-install-async'
+        - $ref: '#/components/parameters/query-install-deploy'
+        - $ref: '#/components/parameters/query-install-ignore-errors'
+        - $ref: '#/components/parameters/query-install-invoke'
+        - $ref: '#/components/parameters/query-install-parallel'
+        - $ref: '#/components/parameters/query-install-purge'
+        - $ref: '#/components/parameters/query-install-reinstall'
+        - $ref: '#/components/parameters/query-install-simulate'
+        - $ref: '#/components/parameters/query-install-tenant-parameters'
+        - $ref: '#/components/parameters/query-install-dep-check'
+    parameters:
+      - name: tenant_id
+        in: path
+        required: true
+        schema:
+          type: string
+  /_/proxy/tenants/{tenant_id}/install/{install_id}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstallJob'
+        '400':
+          description: User error
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      description: Get install job status
+      operationId: getInstallJob
+      tags:
+        - proxy-tenant-installation
+    delete:
+      responses:
+        '204':
+          description: OK
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+        '400':
+          description: User error
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      description: Delete install job
+      operationId: deleteInstallJob
+      tags:
+        - proxy-tenant-installation
+    parameters:
+      - name: install_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: tenant_id
+        in: path
+        required: true
+        schema:
+          type: string
+  /_/proxy/tenants/{tenant_id}/upgrade:
+    post:
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantModuleDescriptorList'
+        '201':
+          description: Install job created (async mode)
+          headers:
+            Location:
+              description: URI to the install job
+              schema:
+                type: string
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantModuleDescriptorList'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      description: Upgrade each module to the latest version. The upgrade is rejected
+        if it would violate the interface dependencies of the modules. The response
+        is a list of modules that have been enabled, disabled or upgraded to perform
+        the upgrade.
+      operationId: createUpgradeJob
+      tags:
+        - proxy-tenant-installation
+      parameters:
+        - $ref: '#/components/parameters/query-pre-release'
+        - $ref: '#/components/parameters/query-npm-snapshot'
+        - $ref: '#/components/parameters/query-install-async'
+        - $ref: '#/components/parameters/query-install-deploy'
+        - $ref: '#/components/parameters/query-install-ignore-errors'
+        - $ref: '#/components/parameters/query-install-invoke'
+        - $ref: '#/components/parameters/query-install-parallel'
+        - $ref: '#/components/parameters/query-install-purge'
+        - $ref: '#/components/parameters/query-install-reinstall'
+        - $ref: '#/components/parameters/query-install-simulate'
+        - $ref: '#/components/parameters/query-install-tenant-parameters'
+        - $ref: '#/components/parameters/query-install-dep-check'
+    parameters:
+      - name: tenant_id
+        in: path
+        required: true
+        schema:
+          type: string
+  /_/proxy/tenants/{tenant_id}/interfaces:
+    get:
+      responses:
+        '200':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InterfaceList'
+        '400':
+          description: Client Error
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      description: Get all interfaces for tenant
+      operationId: getAllInterfaces
+      tags:
+        - proxy-tenant-interface
+      parameters:
+        - name: full
+          in: query
+          description: Whether brief or full interface list
+          schema:
+            default: false
+            type: boolean
+        - name: type
+          in: query
+          description: Limit by interfaceType
+          schema:
+            type: string
+    parameters:
+      - name: tenant_id
+        in: path
+        required: true
+        schema:
+          type: string
+  /_/proxy/tenants/{tenant_id}/interfaces/{interface_id}:
+    get:
+      responses:
+        '200':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantModuleDescriptorList'
+        '400':
+          description: Client Error
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      description: Get all modules that provide the specified interface ID. DEPRECATED
+        Use /_/proxy/tenants/{tenant_id}/modules?provide={interface_id} instead.
+      operationId: getInterface
+      tags:
+        - proxy-tenant-interface
+      parameters:
+        - name: type
+          in: query
+          description: Limit by interfaceType
+          schema:
+            type: string
+    parameters:
+      - name: interface_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: tenant_id
+        in: path
+        required: true
+        schema:
+          type: string
+  /_/proxy/tenants/{tenant_id}/timers:
+    get:
+      responses:
+        '200':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimerDescriptorList'
+        '400':
+          description: Client Error
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      description: Get timers for tenant.
+      operationId: getAllTimers
+      tags:
+        - proxy-tenant-timer
+    patch:
+      responses:
+        '204':
+          description: Patch OK
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+        '400':
+          description: Client Error
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      description: patch timer. Both routingEntry and id must be given. The routingEntry.unit,
+        routingEntry.delay and routingEntry.schedule determines the new schedule for
+        the timer. Using delay=0 disables a timer. Omitting delay, unit and schedule
+        reverts timer back to initial values from module.
+      operationId: updateTimers
+      tags:
+        - proxy-tenant-timer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TimerDescriptor'
+        required: true
+    parameters:
+      - name: tenant_id
+        in: path
+        required: true
+        schema:
+          type: string
+  /_/proxy/tenants/{tenant_id}/timers/{timer_id}:
+    get:
+      responses:
+        '200':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimerDescriptor'
+        '400':
+          description: Client Error
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      description: get timer with id given.
+      operationId: getTimer
+      tags:
+        - proxy-tenant-timer
+    patch:
+      responses:
+        '204':
+          description: Patch OK
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+        '400':
+          description: Client Error
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      description: patch timer with routing entry as body. The unit, delay and schedule
+        determines the new schedule for the timer. Using delay=0 disables a timer.
+        Omitting delay, unit and schedule reverts timer back to initial values from
+        module.
+      operationId: updateTimer
+      tags:
+        - proxy-tenant-timer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoutingEntry'
+        required: true
+    parameters:
+      - name: timer_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: tenant_id
+        in: path
+        required: true
+        schema:
+          type: string
+  /_/proxy/health:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatusList'
+        '500':
+          description: Server Error
+      description: Check health of modules
+      operationId: getHealthStatus
+      tags:
+        - proxy-health
+  /_/proxy/pull/modules:
+    post:
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModuleList'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      description: Pull modules (i.e. Module Descriptors) from a remote repository.
+        The PullDescriptor includes one or more URLs. And the operation will try all
+        URLs in order until one succeeds. Hence, the URLs should be pointing to identical
+        remote repositories.
+      operationId: pullDescriptors
+      tags:
+        - proxy-descriptor
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PullDescriptor'
+        required: true
+  /_/env:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              description: URI to the environment entry instance
+              schema:
+                type: string
+            X-Okapi-Trace:
+              required: false
+              description: Okapi trace and timing
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvEntry'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+      description: Add environment entry
+      operationId: createEnvironmentEntry
+      tags:
+        - environment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnvEntry'
+        required: true
+    get:
+      responses:
+        '200':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvEntryList'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+      description: Get list of all environment variables
+      operationId: getAllEnvironmentEntries
+      tags:
+        - environment
+  /_/env/{id}:
+    get:
+      responses:
+        '200':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvEntry'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      description: Get info for one environment variable
+      operationId: getEnvironmentEntry
+      tags:
+        - environment
+    delete:
+      responses:
+        '204':
+          description: ''
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+        '404':
+          description: Not Found
+      description: Remove environment variable
+      operationId: deleteEnvironmentEntry
+      tags:
+        - environment
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /_/version:
+    get:
+      responses:
+        '200':
+          description: OK, with version in body
+          headers:
+            X-Okapi-Trace:
+              $ref: '#/components/headers/X-Okapi-Trace'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+      description: Get Okapi version
+      operationId: getVersion
+      tags:
+        - version
+  /_/invoke/tenant/{id}:
+    get:
+      responses:
+        '200':
+          description: OK
+      description: Invoke any service (the rest of the path, any method, any response).
+      operationId: invoke
+      tags:
+        - invoke-service
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+
+components:
+  schemas:
+    DeploymentDescriptor:
+      $ref: schemas/DeploymentDescriptor.json
+    LaunchDescriptor:
+      $ref: schemas/LaunchDescriptor.json
+    DeploymentDescriptorList:
+      $ref: schemas/DeploymentDescriptorList.json
+    ModuleDescriptor:
+      $ref: schemas/ModuleDescriptor.json
+    ModuleList:
+      $ref: schemas/ModuleList.json
+    InterfaceDescriptor:
+      $ref: schemas/InterfaceDescriptor.json
+    InterfaceList:
+      $ref: schemas/InterfaceList.json
+    RoutingEntry:
+      $ref: schemas/RoutingEntry.json
+    TimerDescriptor:
+      $ref: schemas/TimerDescriptor.json
+    TimerDescriptorList:
+      $ref: schemas/TimerDescriptorList.json
+    InstallJob:
+      $ref: schemas/InstallJob.json
+    InstallJobList:
+      $ref: schemas/InstallJobList.json
+    TenantDescriptor:
+      $ref: schemas/TenantDescriptor.json
+    TenantList:
+      $ref: schemas/TenantList.json
+    TenantModuleDescriptor:
+      $ref: schemas/TenantModuleDescriptor.json
+    TenantModuleDescriptorList:
+      $ref: schemas/TenantModuleDescriptorList.json
+    HealthStatus:
+      $ref: schemas/HealthStatus.json
+    HealthStatusList:
+      $ref: schemas/HealthStatusList.json
+    HealthDescriptor:
+      $ref: schemas/HealthDescriptor.json
+    HealthDescriptorList:
+      $ref: schemas/HealthDescriptorList.json
+    NodeDescriptor:
+      $ref: schemas/NodeDescriptor.json
+    NodeDescriptorList:
+      $ref: schemas/NodeDescriptorList.json
+    EnvEntry:
+      $ref: schemas/EnvEntry.json
+    EnvEntryList:
+      $ref: schemas/EnvEntryList.json
+    Permission:
+      $ref: schemas/Permission.json
+    PullDescriptor:
+      $ref: schemas/PullDescriptor.json
+  responses: {}
+  parameters:
+    query-pre-release:
+      name: preRelease
+      in: query
+      description: Whether to use pre-release in operation. "true"&#58; use all modules;
+        "false"&#58; releases (no pre-releases); "only"&#58; only pre-releases.
+      schema:
+        default: 'true'
+        enum:
+          - 'true'
+          - 'false'
+          - only
+        type: string
+    query-npm-snapshot:
+      name: npmSnapshot
+      in: query
+      description: Whether to use NPM module snapshots in operation. "true"&#58; use
+        all modules; "false"&#58; releases (no NPM snapshots); "only"&#58; only NPM
+        snapshots.
+      schema:
+        default: 'true'
+        enum:
+          - 'true'
+          - 'false'
+          - only
+        type: string
+    query-install-async:
+      name: async
+      in: query
+      description: Whether to install in the background.
+      schema:
+        default: false
+        type: boolean
+    query-install-deploy:
+      name: deploy
+      in: query
+      description: Whether to deploy (or undeploy if disabling).
+      schema:
+        default: false
+        type: boolean
+    query-install-ignore-errors:
+      name: ignoreErrors
+      in: query
+      description: |
+        Okapi 4.2.0 and later, it is possible to ignore errors during the
+        install operation. This is done by supplying parameter `ignoreErrors=true`.
+        In this case, Okapi will try to upgrade all modules in the modules list,
+        regardless if one of them fails. However, for individual modules, if they
+        fail, their upgrade will not be committed. This is an experimental parameter
+        which was added to be able to inspect all problem(s) with module upgrade(s).
+      schema:
+        default: false
+        type: boolean
+    query-install-invoke:
+      name: invoke
+      in: query
+      description: |
+        Whether to invoke for tenant init/permissions/purge. Use
+         "true" to invoke, "false" to not invoke. Any other value
+         is a regular expression that is matched against the module ID.
+         If that pattern matches, invoke is performed (same as "true").
+      schema:
+        default: 'true'
+        type: string
+    query-install-parallel:
+      name: parallel
+      in: query
+      description: |
+        Number of parallel calls to tenant interfaces of modules.
+        A value of 1 means calls are happening in sequence.
+        If depCheck=false and parallel>1, the invocation will be rejected.
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    query-install-purge:
+      name: purge
+      in: query
+      description: Disabled modules will also be purged.
+      schema:
+        default: false
+        type: boolean
+    query-install-reinstall:
+      name: reinstall
+      in: query
+      description: Whether to install modules even if up-to-update.
+      schema:
+        default: false
+        type: boolean
+    query-install-simulate:
+      name: simulate
+      in: query
+      description: Whether the installation is simulated
+      schema:
+        default: false
+        type: boolean
+    query-install-tenant-parameters:
+      name: tenantParameters
+      in: query
+      description: Parameters for tenant init
+      schema:
+        type: string
+    query-install-dep-check:
+      name: depCheck
+      in: query
+      description: |
+        Whether to check dependencies of modules before being installed. Modules are installed exactly
+          in the order supplied by the client. If depCheck=false and parallel>1, the invocation will be
+          rejected.
+      schema:
+        default: true
+        type: boolean
+  examples: {}
+  requestBodies: {}
+  headers:
+    X-Okapi-Trace:
+      required: false
+      description: Okapi trace and timing
+      schema:
+        type: string
