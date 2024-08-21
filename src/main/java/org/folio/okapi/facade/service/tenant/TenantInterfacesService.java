@@ -85,6 +85,9 @@ public class TenantInterfacesService {
   }
 
   private String obtainToken(String userToken) {
+    if (StringUtils.isBlank(userToken)) {
+      return userToken;
+    }
     return keycloak.map(kc -> kc.tokenManager().grantToken()).map(AccessTokenResponse::getToken).orElse(userToken);
   }
 
