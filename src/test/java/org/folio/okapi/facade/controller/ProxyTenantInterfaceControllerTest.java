@@ -1,5 +1,6 @@
 package org.folio.okapi.facade.controller;
 
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -8,6 +9,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import feign.Client;
@@ -65,21 +67,27 @@ class ProxyTenantInterfaceControllerTest {
 
   @Test
   void getAllInterfaces_positive_interfacesReturned() throws Exception {
-    String tenantName = "mytenant";
-    UUID tenantId = UUID.randomUUID();
+    var tenantName = "mytenant";
+    var tenantId = UUID.randomUUID();
     when(tenantManagerClient.queryTenantsByName(eq(tenantName), any())).thenReturn(
       ResultList.of(1, List.of(Tenant.of(tenantId, tenantName, tenantName))));
     when(tenantEntitlementClient.findByQuery(eq("tenantId==" + tenantId), anyInt(), anyInt(), any())).thenReturn(
       ResultList.of(3, List.of(Entitlement.of("app1", tenantId.toString()), Entitlement.of("app2", tenantId.toString()),
         Entitlement.of("app3", tenantId.toString()))));
-    ModuleDescriptor result = new ModuleDescriptor();
+    var result = new ModuleDescriptor();
     result.setProvides(List.of(new InterfaceDescriptor()));
-    result.getProvides().get(0).setHandlers(List.of(new RoutingEntry()));
+    var routingEntry = new RoutingEntry();
+    routingEntry.setType("system");
+    result.getProvides().get(0).setId("provider1");
+    result.getProvides().get(0).setHandlers(List.of(routingEntry));
     when(applicationManagerClient.queryApplicationDescriptors(eq("id==app1 OR id==app2 OR id==app3"), anyBoolean(),
       anyInt(), anyInt(), any())).thenReturn(
       ResultList.of(1, List.of(ApplicationDescriptor.builder().moduleDescriptors(List.of(result)).build())));
-    mockMvc.perform(get("/_/proxy/tenants/{tenantId}/interfaces", tenantName).header(ACCEPT, APPLICATION_JSON_VALUE))
-      .andExpect(status().isOk());
+    mockMvc.perform(
+        get("/_/proxy/tenants/{tenantId}/interfaces?full=true", tenantName).header(ACCEPT, APPLICATION_JSON_VALUE))
+      .andExpect(status().isOk()).andExpect(jsonPath("$[0].id", is("provider1")))
+      .andExpect(jsonPath("$[0].id", is("provider1")))
+      .andExpect(jsonPath("$[0].handlers[0].type", is("system")));
   }
 
   @Test
