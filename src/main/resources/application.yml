@@ -39,7 +39,7 @@ server:
 folio:
   tenant:
     validation:
-      enabled: true
+      enabled: false
 management:
   endpoints:
     web:

@@ -1,10 +1,33 @@
 package org.folio.okapi.facade.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import feign.Client;
+import java.util.List;
+import java.util.UUID;
+import org.folio.common.domain.model.InterfaceDescriptor;
+import org.folio.common.domain.model.ModuleDescriptor;
+import org.folio.common.domain.model.RoutingEntry;
+import org.folio.okapi.facade.integration.am.ApplicationManagerClient;
+import org.folio.okapi.facade.integration.am.model.ApplicationDescriptor;
+import org.folio.okapi.facade.integration.model.ResultList;
+import org.folio.okapi.facade.integration.mte.TenantEntitlementClient;
+import org.folio.okapi.facade.integration.mte.model.Entitlement;
+import org.folio.okapi.facade.integration.tm.TenantManagerClient;
+import org.folio.okapi.facade.integration.tm.model.Tenant;
+import org.folio.okapi.facade.mapper.InterfaceDescriptorMapper;
+import org.folio.okapi.facade.service.tenant.TenantInterfacesService;
+import org.folio.spring.config.FolioSpringConfiguration;
+import org.folio.spring.scope.FolioExecutionScopeConfig;
+import org.folio.spring.service.TenantService;
 import org.folio.test.types.UnitTest;
 import org.instancio.junit.Given;
 import org.instancio.junit.InstancioExtension;
@@ -12,26 +35,56 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 @UnitTest
-@WebMvcTest(ProxyTenantInterfaceController.class)
+@WebMvcTest({ProxyTenantInterfaceController.class, TenantInterfacesService.class, InterfaceDescriptorMapper.class,
+  ApiExceptionHandler.class})
+@Import({FolioExecutionScopeConfig.class, FolioSpringConfiguration.class})
 @ExtendWith(InstancioExtension.class)
 class ProxyTenantInterfaceControllerTest {
+
+  @MockBean ApplicationManagerClient applicationManagerClient;
+  @MockBean TenantManagerClient tenantManagerClient;
+  @MockBean TenantEntitlementClient tenantEntitlementClient;
+  @MockBean TenantService tenantService;
+  @MockBean Client feignHttpClient;
 
   @Autowired private MockMvc mockMvc;
 
   @Test
-  void getAllInterfaces_negative_notImplemented(@Given String tenantId) throws Exception {
-    mockMvc.perform(get("/_/proxy/tenants/{tenantId}//interfaces", tenantId)
-        .header(ACCEPT, APPLICATION_JSON_VALUE))
-      .andExpect(status().isNotImplemented());
+  void getAllInterfaces_negative_nonExistingTenant() throws Exception {
+    String tenantName = "mytenant";
+    UUID tenantId = UUID.randomUUID();
+    when(tenantManagerClient.queryTenantsByName(eq(tenantName), any())).thenReturn(ResultList.of(0, List.of()));
+    mockMvc.perform(get("/_/proxy/tenants/{tenantId}/interfaces", tenantName).header(ACCEPT, APPLICATION_JSON_VALUE))
+      .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void getAllInterfaces_positive_interfacesReturned() throws Exception {
+    String tenantName = "mytenant";
+    UUID tenantId = UUID.randomUUID();
+    when(tenantManagerClient.queryTenantsByName(eq(tenantName), any())).thenReturn(
+      ResultList.of(1, List.of(Tenant.of(tenantId, tenantName, tenantName))));
+    when(tenantEntitlementClient.findByQuery(eq("tenantId==" + tenantId), anyInt(), anyInt(), any())).thenReturn(
+      ResultList.of(3, List.of(Entitlement.of("app1", tenantId.toString()), Entitlement.of("app2", tenantId.toString()),
+        Entitlement.of("app3", tenantId.toString()))));
+    ModuleDescriptor result = new ModuleDescriptor();
+    result.setProvides(List.of(new InterfaceDescriptor()));
+    result.getProvides().get(0).setHandlers(List.of(new RoutingEntry()));
+    when(applicationManagerClient.queryApplicationDescriptors(eq("id==app1 OR id==app2 OR id==app3"), anyBoolean(),
+      anyInt(), anyInt(), any())).thenReturn(
+      ResultList.of(1, List.of(ApplicationDescriptor.builder().moduleDescriptors(List.of(result)).build())));
+    mockMvc.perform(get("/_/proxy/tenants/{tenantId}/interfaces", tenantName).header(ACCEPT, APPLICATION_JSON_VALUE))
+      .andExpect(status().isOk());
   }
 
   @Test
   void getInterface_negative_notImplemented(@Given String tenantId, @Given String interfaceId) throws Exception {
-    mockMvc.perform(get("/_/proxy/tenants/{tenantId}/interfaces/{interfaceId}", tenantId, interfaceId)
-        .header(ACCEPT, APPLICATION_JSON_VALUE))
-      .andExpect(status().isNotImplemented());
+    mockMvc.perform(get("/_/proxy/tenants/{tenantId}/interfaces/{interfaceId}", tenantId, interfaceId).header(ACCEPT,
+      APPLICATION_JSON_VALUE)).andExpect(status().isNotImplemented());
   }
 }
