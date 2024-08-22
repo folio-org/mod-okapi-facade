@@ -12,4 +12,10 @@ public class PaginationUtilTest {
     var result = PaginationUtil.getWithPagination(offset -> offset, 2, input -> List.of(input, input), input -> 5);
     assertThat(result).isEqualTo(List.of(0, 0, 2, 2, 4, 4));
   }
+
+  @Test
+  public void testGetWithPaginationNoData() {
+    var result = PaginationUtil.getWithPagination(offset -> offset, 2, input -> List.of(), input -> 1);
+    assertThat(result).isEqualTo(List.of());
+  }
 }
