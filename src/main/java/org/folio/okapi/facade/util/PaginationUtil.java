@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.ToIntFunction;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class PaginationUtil {
+
   public static <T, E> List<E> getWithPagination(PageRetriever<T> action, int pageSize,
-    Function<T, ? extends Collection<E>> resultsExtractor, Function<T, Integer> totalRecordsCountExtractor) {
+    Function<T, ? extends Collection<E>> resultsExtractor, ToIntFunction<T> totalRecordsCountExtractor) {
     var result = new ArrayList<E>();
     T page;
     var offset = 0;
@@ -19,7 +21,7 @@ public class PaginationUtil {
       offset += pageSize;
       pageResults = resultsExtractor.apply(page);
       result.addAll(pageResults);
-    } while (totalRecordsCountExtractor.apply(page) > result.size() && !pageResults.isEmpty());
+    } while (totalRecordsCountExtractor.applyAsInt(page) > result.size() && !pageResults.isEmpty());
     return result;
   }
 
