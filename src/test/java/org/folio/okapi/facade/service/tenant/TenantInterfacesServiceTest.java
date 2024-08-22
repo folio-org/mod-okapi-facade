@@ -37,7 +37,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class TenantInterfacesServiceTest {
+class TenantInterfacesServiceTest {
 
   @InjectMocks TenantInterfacesService unit;
   @Mock ApplicationManagerClient applicationManagerClient;
@@ -49,14 +49,14 @@ public class TenantInterfacesServiceTest {
   @Mock AccessTokenResponse accessTokenResponse;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     when(keycloak.get().tokenManager()).thenReturn(tokenManager);
     when(tokenManager.grantToken()).thenReturn(accessTokenResponse);
     when(accessTokenResponse.getToken()).thenReturn("AccessToken");
   }
 
   @Test
-  public void getTenantInterfaces_positive_interfacesReturned() {
+  void getTenantInterfaces_positive_interfacesReturned() {
     var tenantName = "tenant123";
     var tenantId = UUID.randomUUID();
     when(tenantManagerClient.queryTenantsByName(eq(tenantName), any())).thenReturn(
@@ -78,17 +78,17 @@ public class TenantInterfacesServiceTest {
       anyInt(), anyInt(), any())).thenReturn(
       ResultList.of(1, List.of(ApplicationDescriptor.builder().moduleDescriptors(List.of(mockData)).build())));
     var result = unit.getTenantInterfaces("user token", tenantName, true, "system");
-    assertThat(result.size()).isEqualTo(1);
+    assertThat(result).hasSize(1);
     assertThat(result.get(0).getId()).isEqualTo(mockData.getProvides().get(0).getId());
     assertThat(result.get(0).getVersion()).isEqualTo(mockData.getProvides().get(0).getVersion());
 
-    assertThat(result.get(0).getHandlers().size()).isEqualTo(1);
+    assertThat(result.get(0).getHandlers()).hasSize(1);
     assertThat(result.get(0).getHandlers().get(0).getMethods()).isEqualTo(List.of("GET"));
     assertThat(result.get(0).getHandlers().get(0).getPath()).isEqualTo("/hello/world");
   }
 
   @Test
-  public void getTenantInterfaces_negative_tenantMissing() {
+  void getTenantInterfaces_negative_tenantMissing() {
     when(tenantManagerClient.queryTenantsByName(any(), any())).thenReturn(ResultList.of(0, List.of()));
     assertThatThrownBy(() -> unit.getTenantInterfaces("user token", "missing tenant", true, "system")).hasMessage(
       "Tenant not found by name missing tenant").hasSameClassAs(new EntityNotFoundException());

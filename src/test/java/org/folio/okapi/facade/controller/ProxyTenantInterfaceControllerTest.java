@@ -59,7 +59,6 @@ class ProxyTenantInterfaceControllerTest {
   @Test
   void getAllInterfaces_negative_nonExistingTenant() throws Exception {
     String tenantName = "mytenant";
-    UUID tenantId = UUID.randomUUID();
     when(tenantManagerClient.queryTenantsByName(eq(tenantName), any())).thenReturn(ResultList.of(0, List.of()));
     mockMvc.perform(get("/_/proxy/tenants/{tenantId}/interfaces", tenantName).header(ACCEPT, APPLICATION_JSON_VALUE))
       .andExpect(status().isNotFound());
