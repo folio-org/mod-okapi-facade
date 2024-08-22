@@ -54,13 +54,13 @@ public class TenantInterfacesService {
       return Collections.emptyList();
     }
 
-    var appDescriptors = getAppDescriptors(entitlements, isFull, interfaceType, token);
+    var appDescriptors = getAppDescriptors(entitlements, token);
     var interfaceDescriptors =
       appDescriptors.stream().map(ApplicationDescriptor::getModuleDescriptors).filter(Objects::nonNull)
         .flatMap(Collection::stream).map(ModuleDescriptor::getProvides).filter(Objects::nonNull)
         .flatMap(Collection::stream).filter(Objects::nonNull).filter(getFilter(interfaceType));
 
-    return map(interfaceDescriptors, isFull).collect(Collectors.toList());
+    return map(interfaceDescriptors, isFull).toList();
   }
 
   private UUID getTenantId(String tenantName, String token) {
@@ -96,8 +96,7 @@ public class TenantInterfacesService {
       entitlementsQueryLimit, ResultList::getRecords, ResultList::getTotalRecords);
   }
 
-  protected List<ApplicationDescriptor> getAppDescriptors(List<Entitlement> entitlements, boolean full,
-    String interfaceType, String token) {
+  protected List<ApplicationDescriptor> getAppDescriptors(List<Entitlement> entitlements, String token) {
     var applications =
       entitlements.stream().map(Entitlement::getApplicationId).collect(Collectors.toCollection(TreeSet::new));
     var applicationsQuery =
