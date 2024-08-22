@@ -77,9 +77,12 @@ class ProxyTenantInterfaceControllerTest {
     var result = new ModuleDescriptor();
     result.setProvides(List.of(new InterfaceDescriptor()));
     var routingEntry = new RoutingEntry();
+    routingEntry.setMethods(List.of("GET"));
+    routingEntry.setPath("/hello/world");
     routingEntry.setType("system");
     result.getProvides().get(0).setId("provider1");
     result.getProvides().get(0).setHandlers(List.of(routingEntry));
+    result.getProvides().get(0).setInterfaceType("system");
     when(applicationManagerClient.queryApplicationDescriptors(eq("id==app1 OR id==app2 OR id==app3"), anyBoolean(),
       anyInt(), anyInt(), any())).thenReturn(
       ResultList.of(1, List.of(ApplicationDescriptor.builder().moduleDescriptors(List.of(result)).build())));
@@ -87,7 +90,10 @@ class ProxyTenantInterfaceControllerTest {
         get("/_/proxy/tenants/{tenantId}/interfaces?full=true", tenantName).header(ACCEPT, APPLICATION_JSON_VALUE))
       .andExpect(status().isOk()).andExpect(jsonPath("$[0].id", is("provider1")))
       .andExpect(jsonPath("$[0].id", is("provider1")))
-      .andExpect(jsonPath("$[0].handlers[0].type", is("system")));
+      .andExpect(jsonPath("$[0].interfaceType", is("system")))
+      .andExpect(jsonPath("$[0].handlers[0].type", is("system")))
+      .andExpect(jsonPath("$[0].handlers[0].path", is("/hello/world")))
+      .andExpect(jsonPath("$[0].handlers[0].methods[0]", is("GET")));
   }
 
   @Test
