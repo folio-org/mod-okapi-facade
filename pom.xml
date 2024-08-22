@@ -68,7 +68,8 @@
       src/main/java/**/rest/resource/**/*,
       src/main/java/**/mapper/**/*,
       src/main/java/**/integration/**/model/**/*,
-      src/main/java/**/*Application.java
+      src/main/java/**/*Application.java,
+      src/main/java/**/*Configuration.java
     </sonar.exclusions>
   </properties>
 
