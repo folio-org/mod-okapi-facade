@@ -39,8 +39,8 @@ public class TenantInterfacesService {
   private final Optional<Keycloak> keycloak;
   private final InterfaceDescriptorMapper mapper;
 
-  @Value("${te.querylimit:500}") private int entitlementsQueryLimit = 500;
-  @Value("${am.querylimit:500}") private int applicationsQueryLimit = 500;
+  @Value("${application.te.querylimit:500}") private int entitlementsQueryLimit = 500;
+  @Value("${application.am.querylimit:500}") private int applicationsQueryLimit = 500;
 
   public List<InterfaceDescriptor> getTenantInterfaces(String userToken, String tenantName, Boolean full,
     String interfaceType) {
