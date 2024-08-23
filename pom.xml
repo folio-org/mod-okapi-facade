@@ -38,7 +38,6 @@
     <folio-spring-support.version>8.1.2</folio-spring-support.version>
     <folio-java-checkstyle.version>1.0.1</folio-java-checkstyle.version>
     <applications-poc-tools.version>1.5.5</applications-poc-tools.version>
-    <folio-security.version>1.5.3</folio-security.version>
 
     <okapi-facade.yaml-file>${project.basedir}/src/main/resources/swagger.api/okapi-facade.yaml
     </okapi-facade.yaml-file>
