@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
-public interface TenantEntitlementClient {
+public interface MgrTenantEntitlementsClient {
 
   @GetMapping(value = "/entitlements", consumes = APPLICATION_JSON_VALUE)
   ResultList<Entitlement> findByQuery(@RequestParam(value = "query", required = false) String query,

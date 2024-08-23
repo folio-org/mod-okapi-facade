@@ -17,12 +17,12 @@ import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.folio.common.domain.model.ModuleDescriptor;
 import org.folio.okapi.facade.domain.dto.InterfaceDescriptor;
-import org.folio.okapi.facade.integration.ma.ApplicationManagerClient;
+import org.folio.okapi.facade.integration.ma.MgrApplicationsClient;
 import org.folio.okapi.facade.integration.ma.model.ApplicationDescriptor;
 import org.folio.okapi.facade.integration.model.ResultList;
-import org.folio.okapi.facade.integration.mte.TenantEntitlementClient;
+import org.folio.okapi.facade.integration.mte.MgrTenantEntitlementsClient;
 import org.folio.okapi.facade.integration.mte.model.Entitlement;
-import org.folio.okapi.facade.integration.tm.TenantManagerClient;
+import org.folio.okapi.facade.integration.tm.MgrTenantsClient;
 import org.folio.okapi.facade.integration.tm.model.Tenant;
 import org.folio.okapi.facade.mapper.InterfaceDescriptorMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,9 +32,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class TenantInterfacesService {
 
-  private final ApplicationManagerClient applicationManagerClient;
-  private final TenantEntitlementClient tenantEntitlementClient;
-  private final TenantManagerClient tenantManagerClient;
+  private final MgrApplicationsClient mgrApplicationsClient;
+  private final MgrTenantEntitlementsClient mgrTenantEntitlementsClient;
+  private final MgrTenantsClient mgrTenantsClient;
   private final InterfaceDescriptorMapper mapper;
 
   @Value("${application.mte.querylimit:500}") private int entitlementsQueryLimit = 500;
@@ -62,7 +62,7 @@ public class TenantInterfacesService {
   }
 
   private UUID getTenantId(String tenantName, String token) {
-    var tenants = tenantManagerClient.queryTenantsByName(tenantName, token);
+    var tenants = mgrTenantsClient.queryTenantsByName(tenantName, token);
     if (tenants.getTotalRecords() < 1) {
       throw new EntityNotFoundException("Tenant not found by name " + tenantName);
     }
@@ -86,7 +86,7 @@ public class TenantInterfacesService {
     var query = String.format("tenantId==%s", tenantId.toString());
 
     return getWithPagination(
-      offset -> tenantEntitlementClient.findByQuery(query, entitlementsQueryLimit, offset, token),
+      offset -> mgrTenantEntitlementsClient.findByQuery(query, entitlementsQueryLimit, offset, token),
       entitlementsQueryLimit, ResultList::getRecords, ResultList::getTotalRecords);
   }
 
@@ -97,7 +97,7 @@ public class TenantInterfacesService {
       applications.stream().map(appIdAndVer -> "id==" + appIdAndVer).collect(joining(" OR "));
 
     return getWithPagination(
-      offset -> applicationManagerClient.queryApplicationDescriptors(applicationsQuery, true, applicationsQueryLimit,
+      offset -> mgrApplicationsClient.queryApplicationDescriptors(applicationsQuery, true, applicationsQueryLimit,
         offset, token), applicationsQueryLimit, ResultList::getRecords, ResultList::getTotalRecords);
   }
 }

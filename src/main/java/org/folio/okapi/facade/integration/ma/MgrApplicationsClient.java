@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
-public interface ApplicationManagerClient {
+public interface MgrApplicationsClient {
 
   @GetMapping(value = "/applications", consumes = APPLICATION_JSON_VALUE)
   ResultList<ApplicationDescriptor> queryApplicationDescriptors(

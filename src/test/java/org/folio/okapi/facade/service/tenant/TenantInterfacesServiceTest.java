@@ -14,12 +14,12 @@ import jakarta.persistence.EntityNotFoundException;
 import org.folio.common.domain.model.InterfaceDescriptor;
 import org.folio.common.domain.model.ModuleDescriptor;
 import org.folio.common.domain.model.RoutingEntry;
-import org.folio.okapi.facade.integration.ma.ApplicationManagerClient;
+import org.folio.okapi.facade.integration.ma.MgrApplicationsClient;
 import org.folio.okapi.facade.integration.ma.model.ApplicationDescriptor;
 import org.folio.okapi.facade.integration.model.ResultList;
-import org.folio.okapi.facade.integration.mte.TenantEntitlementClient;
+import org.folio.okapi.facade.integration.mte.MgrTenantEntitlementsClient;
 import org.folio.okapi.facade.integration.mte.model.Entitlement;
-import org.folio.okapi.facade.integration.tm.TenantManagerClient;
+import org.folio.okapi.facade.integration.tm.MgrTenantsClient;
 import org.folio.okapi.facade.integration.tm.model.Tenant;
 import org.folio.okapi.facade.mapper.InterfaceDescriptorMapper;
 import org.junit.jupiter.api.Test;
@@ -34,18 +34,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TenantInterfacesServiceTest {
 
   @InjectMocks TenantInterfacesService unit;
-  @Mock ApplicationManagerClient applicationManagerClient;
-  @Mock TenantEntitlementClient tenantEntitlementClient;
-  @Mock TenantManagerClient tenantManagerClient;
+  @Mock MgrApplicationsClient mgrApplicationsClient;
+  @Mock MgrTenantEntitlementsClient mgrTenantEntitlementsClient;
+  @Mock MgrTenantsClient mgrTenantsClient;
   @Spy InterfaceDescriptorMapper mapper = Mappers.getMapper(InterfaceDescriptorMapper.class);
 
   @Test
   void getTenantInterfaces_positive_interfacesReturned() {
     var tenantName = "tenant123";
     var tenantId = randomUUID();
-    when(tenantManagerClient.queryTenantsByName(eq(tenantName), any())).thenReturn(
+    when(mgrTenantsClient.queryTenantsByName(eq(tenantName), any())).thenReturn(
       ResultList.of(1, of(Tenant.of(tenantId, tenantName, tenantName))));
-    when(tenantEntitlementClient.findByQuery(eq("tenantId==" + tenantId), anyInt(), anyInt(), any())).thenReturn(
+    when(mgrTenantEntitlementsClient.findByQuery(eq("tenantId==" + tenantId), anyInt(), anyInt(), any())).thenReturn(
       ResultList.of(3, of(Entitlement.of("app1", tenantId.toString()), Entitlement.of("app2", tenantId.toString()),
         Entitlement.of("app3", tenantId.toString()))));
     var mockData = new ModuleDescriptor();
@@ -58,7 +58,7 @@ class TenantInterfacesServiceTest {
     mockData.getProvides().get(0).setVersion("ver1");
     mockData.getProvides().get(0).setHandlers(of(routingEntry));
     mockData.getProvides().get(0).setInterfaceType("system");
-    when(applicationManagerClient.queryApplicationDescriptors(eq("id==app1 OR id==app2 OR id==app3"), anyBoolean(),
+    when(mgrApplicationsClient.queryApplicationDescriptors(eq("id==app1 OR id==app2 OR id==app3"), anyBoolean(),
       anyInt(), anyInt(), any())).thenReturn(
       ResultList.of(1, of(ApplicationDescriptor.builder().moduleDescriptors(of(mockData)).build())));
     var result = unit.getTenantInterfaces("user token", tenantName, true, "system");
@@ -73,7 +73,7 @@ class TenantInterfacesServiceTest {
 
   @Test
   void getTenantInterfaces_negative_tenantMissing() {
-    when(tenantManagerClient.queryTenantsByName(any(), any())).thenReturn(ResultList.of(0, of()));
+    when(mgrTenantsClient.queryTenantsByName(any(), any())).thenReturn(ResultList.of(0, of()));
     assertThatThrownBy(() -> unit.getTenantInterfaces("user token", "missing tenant", true, "system")).hasMessage(
       "Tenant not found by name missing tenant").hasSameClassAs(new EntityNotFoundException());
   }

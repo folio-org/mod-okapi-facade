@@ -18,12 +18,12 @@ import java.util.UUID;
 import org.folio.common.domain.model.InterfaceDescriptor;
 import org.folio.common.domain.model.ModuleDescriptor;
 import org.folio.common.domain.model.RoutingEntry;
-import org.folio.okapi.facade.integration.ma.ApplicationManagerClient;
+import org.folio.okapi.facade.integration.ma.MgrApplicationsClient;
 import org.folio.okapi.facade.integration.ma.model.ApplicationDescriptor;
 import org.folio.okapi.facade.integration.model.ResultList;
-import org.folio.okapi.facade.integration.mte.TenantEntitlementClient;
+import org.folio.okapi.facade.integration.mte.MgrTenantEntitlementsClient;
 import org.folio.okapi.facade.integration.mte.model.Entitlement;
-import org.folio.okapi.facade.integration.tm.TenantManagerClient;
+import org.folio.okapi.facade.integration.tm.MgrTenantsClient;
 import org.folio.okapi.facade.integration.tm.model.Tenant;
 import org.folio.okapi.facade.mapper.InterfaceDescriptorMapper;
 import org.folio.okapi.facade.service.tenant.TenantInterfacesService;
@@ -48,9 +48,9 @@ import org.springframework.test.web.servlet.MockMvc;
 @ExtendWith(InstancioExtension.class)
 class ProxyTenantInterfaceControllerTest {
 
-  @MockBean ApplicationManagerClient applicationManagerClient;
-  @MockBean TenantManagerClient tenantManagerClient;
-  @MockBean TenantEntitlementClient tenantEntitlementClient;
+  @MockBean MgrApplicationsClient mgrApplicationsClient;
+  @MockBean MgrTenantsClient mgrTenantsClient;
+  @MockBean MgrTenantEntitlementsClient mgrTenantEntitlementsClient;
   @MockBean TenantService tenantService;
   @MockBean Client feignHttpClient;
 
@@ -59,7 +59,7 @@ class ProxyTenantInterfaceControllerTest {
   @Test
   void getAllInterfaces_negative_nonExistingTenant() throws Exception {
     String tenantName = "mytenant";
-    when(tenantManagerClient.queryTenantsByName(eq(tenantName), any())).thenReturn(ResultList.of(0, List.of()));
+    when(mgrTenantsClient.queryTenantsByName(eq(tenantName), any())).thenReturn(ResultList.of(0, List.of()));
     mockMvc.perform(get("/_/proxy/tenants/{tenantId}/interfaces", tenantName).header(ACCEPT, APPLICATION_JSON_VALUE))
       .andExpect(status().isNotFound());
   }
@@ -68,9 +68,9 @@ class ProxyTenantInterfaceControllerTest {
   void getAllInterfaces_positive_interfacesReturned() throws Exception {
     var tenantName = "mytenant";
     var tenantId = UUID.randomUUID();
-    when(tenantManagerClient.queryTenantsByName(eq(tenantName), any())).thenReturn(
+    when(mgrTenantsClient.queryTenantsByName(eq(tenantName), any())).thenReturn(
       ResultList.of(1, List.of(Tenant.of(tenantId, tenantName, tenantName))));
-    when(tenantEntitlementClient.findByQuery(eq("tenantId==" + tenantId), anyInt(), anyInt(), any())).thenReturn(
+    when(mgrTenantEntitlementsClient.findByQuery(eq("tenantId==" + tenantId), anyInt(), anyInt(), any())).thenReturn(
       ResultList.of(3, List.of(Entitlement.of("app1", tenantId.toString()), Entitlement.of("app2", tenantId.toString()),
         Entitlement.of("app3", tenantId.toString()))));
     var result = new ModuleDescriptor();
@@ -82,7 +82,7 @@ class ProxyTenantInterfaceControllerTest {
     result.getProvides().get(0).setId("provider1");
     result.getProvides().get(0).setHandlers(List.of(routingEntry));
     result.getProvides().get(0).setInterfaceType("system");
-    when(applicationManagerClient.queryApplicationDescriptors(eq("id==app1 OR id==app2 OR id==app3"), anyBoolean(),
+    when(mgrApplicationsClient.queryApplicationDescriptors(eq("id==app1 OR id==app2 OR id==app3"), anyBoolean(),
       anyInt(), anyInt(), any())).thenReturn(
       ResultList.of(1, List.of(ApplicationDescriptor.builder().moduleDescriptors(List.of(result)).build())));
     mockMvc.perform(

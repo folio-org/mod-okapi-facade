@@ -17,16 +17,17 @@ import org.springframework.context.annotation.Import;
 @Configuration
 @Import(FeignClientsConfiguration.class)
 @ConfigurationProperties(prefix = "tenant.entitlement")
-public class TenantEntitlementConfiguration {
+public class MgrTenantEntitlementsClientConfiguration {
 
   private String url;
 
   private TlsProperties tls;
 
   @Bean
-  public TenantEntitlementClient tenantEntitlementClient(OkHttpClient okHttpClient, Contract contract, Encoder encoder,
+  public MgrTenantEntitlementsClient tenantEntitlementClient(OkHttpClient okHttpClient, Contract contract,
+    Encoder encoder,
     Decoder decoder) {
     return FeignClientTlsUtils.buildTargetFeignClient(okHttpClient, contract, encoder, decoder, tls, url,
-      TenantEntitlementClient.class);
+      MgrTenantEntitlementsClient.class);
   }
 }
