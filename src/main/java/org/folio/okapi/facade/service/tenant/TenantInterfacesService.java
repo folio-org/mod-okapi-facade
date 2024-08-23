@@ -1,5 +1,7 @@
 package org.folio.okapi.facade.service.tenant;
 
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toCollection;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.folio.okapi.facade.util.PaginationUtil.getWithPagination;
 
@@ -11,7 +13,6 @@ import java.util.Objects;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.folio.common.domain.model.ModuleDescriptor;
@@ -49,12 +50,15 @@ public class TenantInterfacesService {
     }
 
     var appDescriptors = getAppDescriptors(entitlements, token);
-    var interfaceDescriptors =
+    var moduleDescriptorsStream =
       appDescriptors.stream().map(ApplicationDescriptor::getModuleDescriptors).filter(Objects::nonNull)
-        .flatMap(Collection::stream).map(ModuleDescriptor::getProvides).filter(Objects::nonNull)
-        .flatMap(Collection::stream).filter(Objects::nonNull).filter(getFilter(interfaceType));
+        .flatMap(Collection::stream);
+    var interfaceDescriptorsStream =
+      moduleDescriptorsStream.map(ModuleDescriptor::getProvides).filter(Objects::nonNull).flatMap(Collection::stream);
+    var filteredInterfaceDescriptors =
+      interfaceDescriptorsStream.filter(Objects::nonNull).filter(getFilter(interfaceType));
 
-    return map(interfaceDescriptors, full).toList();
+    return map(filteredInterfaceDescriptors, full).toList();
   }
 
   private UUID getTenantId(String tenantName, String token) {
@@ -88,9 +92,9 @@ public class TenantInterfacesService {
 
   protected List<ApplicationDescriptor> getAppDescriptors(List<Entitlement> entitlements, String token) {
     var applications =
-      entitlements.stream().map(Entitlement::getApplicationId).collect(Collectors.toCollection(TreeSet::new));
+      entitlements.stream().map(Entitlement::getApplicationId).collect(toCollection(TreeSet::new));
     var applicationsQuery =
-      applications.stream().map(appIdAndVer -> "id==" + appIdAndVer).collect(Collectors.joining(" OR "));
+      applications.stream().map(appIdAndVer -> "id==" + appIdAndVer).collect(joining(" OR "));
 
     return getWithPagination(
       offset -> applicationManagerClient.queryApplicationDescriptors(applicationsQuery, true, applicationsQueryLimit,
