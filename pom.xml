@@ -95,7 +95,7 @@
     <dependency>
       <groupId>org.folio</groupId>
       <artifactId>folio-security</artifactId>
-      <version>${folio-security.version}</version>
+      <version>${applications-poc-tools.version}</version>
     </dependency>
 
     <dependency>
