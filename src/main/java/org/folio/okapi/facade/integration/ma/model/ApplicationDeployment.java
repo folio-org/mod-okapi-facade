@@ -1,4 +1,4 @@
-package org.folio.okapi.facade.integration.am.model;
+package org.folio.okapi.facade.integration.ma.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;

@@ -15,8 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.folio.common.domain.model.ModuleDescriptor;
 import org.folio.okapi.facade.domain.dto.InterfaceDescriptor;
-import org.folio.okapi.facade.integration.am.ApplicationManagerClient;
-import org.folio.okapi.facade.integration.am.model.ApplicationDescriptor;
+import org.folio.okapi.facade.integration.ma.ApplicationManagerClient;
+import org.folio.okapi.facade.integration.ma.model.ApplicationDescriptor;
 import org.folio.okapi.facade.integration.model.ResultList;
 import org.folio.okapi.facade.integration.mte.TenantEntitlementClient;
 import org.folio.okapi.facade.integration.mte.model.Entitlement;
@@ -39,8 +39,8 @@ public class TenantInterfacesService {
   private final Optional<Keycloak> keycloak;
   private final InterfaceDescriptorMapper mapper;
 
-  @Value("${application.te.querylimit:500}") private int entitlementsQueryLimit = 500;
-  @Value("${application.am.querylimit:500}") private int applicationsQueryLimit = 500;
+  @Value("${application.mte.querylimit:500}") private int entitlementsQueryLimit = 500;
+  @Value("${application.ma.querylimit:500}") private int applicationsQueryLimit = 500;
 
   public List<InterfaceDescriptor> getTenantInterfaces(String userToken, String tenantName, Boolean full,
     String interfaceType) {

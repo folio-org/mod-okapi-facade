@@ -1,4 +1,4 @@
-package org.folio.okapi.facade.integration.am.model;
+package org.folio.okapi.facade.integration.ma.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

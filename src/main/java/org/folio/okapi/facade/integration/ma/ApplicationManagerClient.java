@@ -1,10 +1,10 @@
-package org.folio.okapi.facade.integration.am;
+package org.folio.okapi.facade.integration.ma;
 
 import static org.folio.common.utils.OkapiHeaders.TOKEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import org.folio.okapi.facade.integration.am.model.ApplicationDescriptor;
-import org.folio.okapi.facade.integration.am.model.ModuleDiscovery;
+import org.folio.okapi.facade.integration.ma.model.ApplicationDescriptor;
+import org.folio.okapi.facade.integration.ma.model.ModuleDiscovery;
 import org.folio.okapi.facade.integration.model.ResultList;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
