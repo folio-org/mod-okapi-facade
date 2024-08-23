@@ -1,15 +1,20 @@
 package org.folio.okapi.facade.controller;
 
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.folio.okapi.facade.domain.dto.ModuleDescriptor;
 import org.folio.okapi.facade.domain.dto.TenantModuleDescriptor;
 import org.folio.okapi.facade.rest.resource.ProxyTenantModuleApi;
+import org.folio.okapi.facade.service.TenantModuleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequiredArgsConstructor
 public class ProxyTenantModuleController implements ProxyTenantModuleApi {
+
+  private final TenantModuleService service;
 
   @Override
   public ResponseEntity<Void> disableTenantModule(String moduleId, String tenantId, String invoke, Boolean purge,
@@ -33,7 +38,9 @@ public class ProxyTenantModuleController implements ProxyTenantModuleApi {
   public ResponseEntity<List<ModuleDescriptor>> getAllTenantModules(String tenantId, Boolean dot, String filter,
     Boolean full, Integer latest, String order, String orderBy, String provide, String require, String scope,
     String preRelease, String npmSnapshot) {
-    return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    return ResponseEntity.ok(
+      service.findAll(tenantId, filter, full, latest, order, orderBy, provide, require, scope, preRelease,
+        npmSnapshot));
   }
 
   @Override

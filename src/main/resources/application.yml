@@ -23,6 +23,8 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/changelog-master.xml
+  cache:
+    type: caffeine
   jackson:
     default-property-inclusion: non_empty
     deserialization:
@@ -30,16 +32,28 @@ spring:
   mustache:
     check-template-location: false
 
+coffee-boots:
+  cache:
+    spec:
+      tenant-applications: maximumSize=109,expireAfterWrite=${TENANT_APPS_TTL:600s}
+
 server:
   port: 8081
   compression:
     enabled: true
     mime-types: text/html,text/plain,text/css,application/javascript,application/json
 
+feign:
+  compression:
+    request:
+      enabled: true
+    response:
+      enabled: true
+
 folio:
   tenant:
     validation:
-      enabled: true
+      enabled: false
 management:
   endpoints:
     web:
@@ -58,7 +72,13 @@ management:
       enabled: false
     readinessstate:
       enabled: true
-debug: false
 
 application:
   environment: ${ENV:folio}
+  mte:
+    url: ${TE_URL:${te.url:http://mgr-tenant-entitlements:8081}}
+    tls:
+      enabled: ${TE_TLS_ENABLED:false}
+      trust-store-path: ${TE_TLS_TRUSTSTORE_PATH:}
+      trust-store-password: ${TE_TLS_TRUSTSTORE_PASSWORD:}
+      trust-store-type: ${TE_TLS_TRUSTSTORE_TYPE:}
