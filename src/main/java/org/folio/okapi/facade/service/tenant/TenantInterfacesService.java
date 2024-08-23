@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -24,8 +23,6 @@ import org.folio.okapi.facade.integration.tm.TenantManagerClient;
 import org.folio.okapi.facade.integration.tm.model.Tenant;
 import org.folio.okapi.facade.mapper.InterfaceDescriptorMapper;
 import org.folio.okapi.facade.util.PaginationUtil;
-import org.keycloak.admin.client.Keycloak;
-import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -36,17 +33,15 @@ public class TenantInterfacesService {
   private final ApplicationManagerClient applicationManagerClient;
   private final TenantEntitlementClient tenantEntitlementClient;
   private final TenantManagerClient tenantManagerClient;
-  private final Optional<Keycloak> keycloak;
   private final InterfaceDescriptorMapper mapper;
 
   @Value("${application.mte.querylimit:500}") private int entitlementsQueryLimit = 500;
   @Value("${application.ma.querylimit:500}") private int applicationsQueryLimit = 500;
 
-  public List<InterfaceDescriptor> getTenantInterfaces(String userToken, String tenantName, Boolean full,
+  public List<InterfaceDescriptor> getTenantInterfaces(String token, String tenantName, Boolean full,
     String interfaceType) {
     boolean isFull = full != null && full;
 
-    var token = obtainToken(userToken);
     var tenantId = getTenantId(tenantName, token);
 
     var entitlements = getAllEntitlements(tenantId, token);
@@ -82,10 +77,6 @@ public class TenantInterfacesService {
     }
     return data -> (StringUtils.isBlank(data.getInterfaceType()) ? "proxy" : data.getInterfaceType()).equalsIgnoreCase(
       interfaceType);
-  }
-
-  private String obtainToken(String userToken) {
-    return keycloak.map(kc -> kc.tokenManager().grantToken()).map(AccessTokenResponse::getToken).orElse(userToken);
   }
 
   protected List<Entitlement> getAllEntitlements(UUID tenantId, String token) {
