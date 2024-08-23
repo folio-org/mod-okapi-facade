@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Import;
 @Data
 @Configuration
 @Import(FeignClientsConfiguration.class)
-@ConfigurationProperties(prefix = "tenant.entitlement")
+@ConfigurationProperties(prefix = "application.mte")
 public class MgrTenantEntitlementsClientConfiguration {
 
   private String url;
