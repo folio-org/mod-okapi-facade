@@ -1,5 +1,8 @@
 package org.folio.okapi.facade.service.tenant;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.folio.okapi.facade.util.PaginationUtil.getWithPagination;
+
 import jakarta.persistence.EntityNotFoundException;
 import java.util.Collection;
 import java.util.Collections;
@@ -11,7 +14,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.folio.common.domain.model.ModuleDescriptor;
 import org.folio.okapi.facade.domain.dto.InterfaceDescriptor;
 import org.folio.okapi.facade.integration.ma.ApplicationManagerClient;
@@ -22,7 +24,6 @@ import org.folio.okapi.facade.integration.mte.model.Entitlement;
 import org.folio.okapi.facade.integration.tm.TenantManagerClient;
 import org.folio.okapi.facade.integration.tm.model.Tenant;
 import org.folio.okapi.facade.mapper.InterfaceDescriptorMapper;
-import org.folio.okapi.facade.util.PaginationUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -38,10 +39,8 @@ public class TenantInterfacesService {
   @Value("${application.mte.querylimit:500}") private int entitlementsQueryLimit = 500;
   @Value("${application.ma.querylimit:500}") private int applicationsQueryLimit = 500;
 
-  public List<InterfaceDescriptor> getTenantInterfaces(String token, String tenantName, Boolean full,
+  public List<InterfaceDescriptor> getTenantInterfaces(String token, String tenantName, boolean full,
     String interfaceType) {
-    boolean isFull = full != null && full;
-
     var tenantId = getTenantId(tenantName, token);
 
     var entitlements = getAllEntitlements(tenantId, token);
@@ -55,7 +54,7 @@ public class TenantInterfacesService {
         .flatMap(Collection::stream).map(ModuleDescriptor::getProvides).filter(Objects::nonNull)
         .flatMap(Collection::stream).filter(Objects::nonNull).filter(getFilter(interfaceType));
 
-    return map(interfaceDescriptors, isFull).toList();
+    return map(interfaceDescriptors, full).toList();
   }
 
   private UUID getTenantId(String tenantName, String token) {
@@ -72,17 +71,17 @@ public class TenantInterfacesService {
   }
 
   private Predicate<? super org.folio.common.domain.model.InterfaceDescriptor> getFilter(String interfaceType) {
-    if (StringUtils.isBlank(interfaceType)) {
+    if (isBlank(interfaceType)) {
       return data -> true;
     }
-    return data -> (StringUtils.isBlank(data.getInterfaceType()) ? "proxy" : data.getInterfaceType()).equalsIgnoreCase(
+    return data -> (isBlank(data.getInterfaceType()) ? "proxy" : data.getInterfaceType()).equalsIgnoreCase(
       interfaceType);
   }
 
   protected List<Entitlement> getAllEntitlements(UUID tenantId, String token) {
     var query = String.format("tenantId==%s", tenantId.toString());
 
-    return PaginationUtil.getWithPagination(
+    return getWithPagination(
       offset -> tenantEntitlementClient.findByQuery(query, entitlementsQueryLimit, offset, token),
       entitlementsQueryLimit, ResultList::getRecords, ResultList::getTotalRecords);
   }
@@ -93,7 +92,7 @@ public class TenantInterfacesService {
     var applicationsQuery =
       applications.stream().map(appIdAndVer -> "id==" + appIdAndVer).collect(Collectors.joining(" OR "));
 
-    return PaginationUtil.getWithPagination(
+    return getWithPagination(
       offset -> applicationManagerClient.queryApplicationDescriptors(applicationsQuery, true, applicationsQueryLimit,
         offset, token), applicationsQueryLimit, ResultList::getRecords, ResultList::getTotalRecords);
   }

@@ -12,7 +12,7 @@ public abstract class InterfaceDescriptorMapper {
     if (interfaceDescriptor == null) {
       return null;
     }
-    InterfaceDescriptor result = new InterfaceDescriptor();
+    var result = new InterfaceDescriptor();
     result.setId(interfaceDescriptor.getId());
     result.setVersion(interfaceDescriptor.getVersion());
     return result;

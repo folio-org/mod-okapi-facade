@@ -21,7 +21,8 @@ public class ProxyTenantInterfaceController implements ProxyTenantInterfaceApi {
   @Override
   public ResponseEntity<List<InterfaceDescriptor>> getAllInterfaces(String tenantId, Boolean full, String type) {
     return ResponseEntity.ofNullable(
-      tenantInterfacesService.getTenantInterfaces(folioExecutionContext.getToken(), tenantId, full, type));
+      tenantInterfacesService.getTenantInterfaces(folioExecutionContext.getToken(), tenantId, full != null && full,
+        type));
   }
 
   @Override
