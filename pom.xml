@@ -472,6 +472,26 @@
               <generateSupportingFiles>true</generateSupportingFiles>
               <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
               <generateModelDocumentation>true</generateModelDocumentation>
+              <importMappings>
+                Permission=org.folio.common.domain.model.Permission,
+                EnvEntry=org.folio.common.domain.model.EnvEntry,
+                RoutingEntry=org.folio.common.domain.model.RoutingEntry,
+                InterfaceDescriptor=org.folio.common.domain.model.InterfaceDescriptor,
+                LaunchDescriptor=org.folio.common.domain.model.LaunchDescriptor,
+                InterfaceReference=org.folio.common.domain.model.InterfaceReference,
+                UiModuleDescriptor=org.folio.common.domain.model.UiModuleDescriptor,
+                ModuleDescriptor=org.folio.common.domain.model.ModuleDescriptor
+              </importMappings>
+              <schemaMappings>
+                Permission=Permission,
+                EnvEntry=EnvEntry,
+                RoutingEntry=RoutingEntry,
+                InterfaceDescriptor=InterfaceDescriptor,
+                LaunchDescriptor=LaunchDescriptor,
+                InterfaceReference=InterfaceReference,
+                UiModuleDescriptor=UiModuleDescriptor,
+                ModuleDescriptor=ModuleDescriptor
+              </schemaMappings>
               <configOptions>
                 <java8>true</java8>
                 <dateLibrary>java</dateLibrary>

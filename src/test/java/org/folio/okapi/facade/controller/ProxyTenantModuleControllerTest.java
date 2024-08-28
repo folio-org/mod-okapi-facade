@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.folio.okapi.facade.domain.dto.TenantModuleDescriptor;
+import org.folio.okapi.facade.service.TenantModuleService;
 import org.folio.okapi.facade.support.DescriptorUtils.GivenTenantModuleDescriptor;
 import org.folio.test.types.UnitTest;
 import org.instancio.junit.Given;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @UnitTest
@@ -26,6 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 class ProxyTenantModuleControllerTest {
 
   @Autowired private MockMvc mockMvc;
+  @MockBean private TenantModuleService service;
 
   @Test
   void disableTenantModule_negative_notImplemented(@Given String tenantId, @Given String moduleId) throws Exception {

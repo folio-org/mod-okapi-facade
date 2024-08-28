@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.folio.okapi.facade.domain.dto.ModuleDescriptor;
+import org.folio.common.domain.model.ModuleDescriptor;
 import org.folio.okapi.facade.integration.te.TenantEntitlementManagerService;
 import org.folio.spring.FolioExecutionContext;
 import org.springframework.stereotype.Service;

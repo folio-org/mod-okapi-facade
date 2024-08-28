@@ -1,7 +1,7 @@
 package org.folio.okapi.facade.controller;
 
 import java.util.List;
-import org.folio.okapi.facade.domain.dto.RoutingEntry;
+import org.folio.common.domain.model.RoutingEntry;
 import org.folio.okapi.facade.domain.dto.TimerDescriptor;
 import org.folio.okapi.facade.rest.resource.ProxyTenantTimerApi;
 import org.springframework.http.HttpStatus;

@@ -2,7 +2,7 @@ package org.folio.okapi.facade.controller;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.folio.okapi.facade.domain.dto.ModuleDescriptor;
+import org.folio.common.domain.model.ModuleDescriptor;
 import org.folio.okapi.facade.domain.dto.TenantModuleDescriptor;
 import org.folio.okapi.facade.rest.resource.ProxyTenantModuleApi;
 import org.folio.okapi.facade.service.TenantModuleService;
