@@ -15,6 +15,16 @@
           "pathPattern": "/_/tenant"
         }
       ]
+    },
+    {
+      "id": "tenantInterfaces",
+      "version": "1.0",
+      "handlers": [
+        {
+          "methods": ["GET"],
+          "pathPattern": "/_/proxy/tenants/{tenant_id}/interfaces"
+        }
+      ]
     }
   ],
   "permissionSets" : [],
