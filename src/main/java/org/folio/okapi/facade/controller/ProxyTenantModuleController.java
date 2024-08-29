@@ -39,8 +39,7 @@ public class ProxyTenantModuleController implements ProxyTenantModuleApi {
     Boolean full, Integer latest, String order, String orderBy, String provide, String require, String scope,
     String preRelease, String npmSnapshot) {
     return ResponseEntity.ok(
-      service.findAll(tenantId, filter, full, latest, order, orderBy, provide, require, scope, preRelease,
-        npmSnapshot));
+      service.findAll(tenantId, filter, full, order, orderBy, provide, require, scope, preRelease, npmSnapshot));
   }
 
   @Override

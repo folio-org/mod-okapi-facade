@@ -1,13 +1,23 @@
 package org.folio.okapi.facade.service;
 
+import static java.util.Collections.reverseOrder;
+import static java.util.Comparator.comparing;
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.folio.common.utils.CollectionUtils.mapItems;
 import static org.folio.common.utils.CollectionUtils.toStream;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.folio.common.domain.model.ApplicationDescriptor;
 import org.folio.common.domain.model.ModuleDescriptor;
 import org.folio.okapi.facade.integration.te.TenantEntitlementManagerService;
+import org.folio.okapi.facade.utils.ModuleId;
 import org.folio.spring.FolioExecutionContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,16 +31,87 @@ public class TenantModuleService {
   private final TenantEntitlementManagerService entitlementService;
   private final FolioExecutionContext folioContext;
 
-  public List<ModuleDescriptor> findAll(String tenantId, String filter, Boolean full, Integer latest,
-    String order, String orderBy, String provide, String require, String scope, String preRelease, String npmSnapshot) {
-    var token = folioContext.getToken(); // the token is not required by target endpoint for now
+  public List<ModuleDescriptor> findAll(String tenantId, String filter, Boolean full, String order, String orderBy,
+    String provide, String require, String scope, String preRelease, String npmSnapshot) {
+    var token = folioContext.getToken(); // the token is not required by the target endpoint for now
     var apps = entitlementService.getTenantApplications(tenantId, token);
 
-    var descriptors = apps.stream()
+    var mdFilter = createFilter(filter, provide, require, scope, preRelease, npmSnapshot);
+    var descriptors = filterModuleDescriptors(apps, mdFilter);
+
+    var sorted = sortModuleDescriptors(descriptors, orderBy, order);
+
+    return full
+      ? sorted
+      : mapItems(sorted, md -> new ModuleDescriptor().id(md.getId()).tags(md.getTags())); // return id and tags only
+  }
+
+  private static Predicate<ModuleDescriptor> createFilter(String filter, String provide, String require,
+    String scope, String preRelease, String npmSnapshot) {
+    return new ModuleDescriptorFilterBuilder()
+      .withModuleId(filter)
+      .withRequired(require)
+      .withProvided(provide)
+      .withScope(scope)
+      .withPreRelease(preRelease)
+      .withNpmSnapshot(npmSnapshot)
+      .build();
+  }
+
+  private static List<ModuleDescriptor> filterModuleDescriptors(List<ApplicationDescriptor> apps,
+    Predicate<ModuleDescriptor> mdFilter) {
+    return toStream(apps)
       .flatMap(appDescriptor -> Stream.concat(toStream(appDescriptor.getModuleDescriptors()),
         toStream(appDescriptor.getUiModuleDescriptors())))
+      .filter(mdFilter)
       .toList();
+  }
 
-    return descriptors;
+  private static List<ModuleDescriptor> sortModuleDescriptors(List<ModuleDescriptor> descriptors, String orderBy,
+    String order) {
+    var result = new ArrayList<>(descriptors);
+
+    if (isBlank(orderBy)) {
+      // the default sorting of Module Descriptor in Okapi is based on ModuleId comparison
+      result.sort(byModuleId());
+      return result;
+    }
+
+    if (!"id".equals(orderBy)) {
+      throw new IllegalArgumentException("unknown orderBy field: " + orderBy);
+    }
+
+    var ord = Order.fromString(defaultIfEmpty(order, Order.DESC.value));
+    if (ord == Order.ASC) {
+      result.sort(byModuleId());
+    } else {
+      result.sort(reverseOrder(byModuleId()));
+    }
+
+    return result;
+  }
+
+  private static Comparator<ModuleDescriptor> byModuleId() {
+    return comparing(md -> new ModuleId(md.getId()));
+  }
+
+  private enum Order {
+    ASC("asc"),
+    DESC("desc");
+
+    private final String value;
+
+    Order(String value) {
+      this.value = value;
+    }
+
+    static Order fromString(String value) {
+      for (var b : Order.values()) {
+        if (b.value.equals(value)) {
+          return b;
+        }
+      }
+      throw new IllegalArgumentException("invalid order value: " + value);
+    }
   }
 }
