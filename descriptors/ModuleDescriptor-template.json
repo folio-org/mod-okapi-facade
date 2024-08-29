@@ -22,10 +22,10 @@
       "handlers": [
         {
           "methods": ["GET"],
-          "pathPattern": "/_/proxy/tenants/{tenant_id}/interfaces"
+          "pathPattern": "/_/proxy/tenants/{tenant_id}/interfaces",
+          "permissionsRequired": []
         }
-      ],
-      "permissionsRequired": []
+      ]
     }
   ],
   "permissionSets" : [],
