@@ -25,7 +25,8 @@
           "pathPattern": "/_/proxy/tenants/{tenant_id}/interfaces",
           "permissionsRequired": []
         }
-      ]
+      ],
+      "permissionsRequired": []
     }
   ],
   "permissionSets" : [],
