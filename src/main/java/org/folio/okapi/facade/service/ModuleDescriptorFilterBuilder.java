@@ -99,8 +99,8 @@ final class ModuleDescriptorFilterBuilder {
       } else if (id.hasNpmSnapshot()) {
         return npmSnapshot == null || npmSnapshot;
       } else {
-        return ((npmSnapshot == null || !npmSnapshot)
-          && (preRelease == null || !preRelease));
+        return (npmSnapshot == null || !npmSnapshot)
+          && (preRelease == null || !preRelease);
       }
     };
   }

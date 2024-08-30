@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Copied from okapi-common/src/main/java/org/folio/okapi/common/SemVer.java
  *
- * Semantic version implementation. Based
+ * <p>Semantic version implementation. Based
  * <a href="https://semver.org/spec/v1.0.0.html">semver 1.0.0</a>,
  * but is a little liberal at the moment, eg only major component
  * is (eg 1) required or even more than 3 components for dot-separated
@@ -22,6 +22,7 @@ public class SemVer implements Comparable<SemVer> {
   /**
    * Construct semantic version from string.
    * May throw IllegalArgumentException if string supplied can not be parsed
+   *
    * @param v semantic version
    */
   public SemVer(String v) {
@@ -75,6 +76,7 @@ public class SemVer implements Comparable<SemVer> {
    * No comparison for mixed operands - in order offer transitive sorting
    * In reality not a problem because systems most likely will use a common
    * scheme for each component for some versioning system
+   *
    * @param c1 left operand
    * @param c2 right operand
    * @return <0 if c1 < c2, 0 if c1 == c2, >0 if c1 > c2
@@ -122,6 +124,7 @@ public class SemVer implements Comparable<SemVer> {
 
   /**
    * Test whether the version appears to be an NPM snapshot (at least in FOLIO).
+   *
    * @return true if it appears to be an NPM snapshot; false otherwise
    */
   public boolean hasNpmSnapshot() {
@@ -130,6 +133,7 @@ public class SemVer implements Comparable<SemVer> {
 
   /**
    * Test whether version has pre-release.
+   *
    * @return true if version has pre-release; false otherwise
    */
   public boolean hasPreRelease() {
@@ -138,6 +142,7 @@ public class SemVer implements Comparable<SemVer> {
 
   /**
    * Test whether this version has prefix of other.
+   *
    * @param other the prefix
    * @return true if this version has prefix of other; false otherwise
    */
@@ -183,6 +188,7 @@ public class SemVer implements Comparable<SemVer> {
 
   /**
    * Compares two semantic versions.
+   *
    * @param other version to compare against this
    * @return -4 is this is major less than other; -3 if this is minor less than
    *     other; -2 if this is patch less than other; -1 for pre-release/build less;
@@ -251,6 +257,7 @@ public class SemVer implements Comparable<SemVer> {
 
   /**
    * Test whether this version is equal to other.
+   *
    * @param that Test this against that
    * @return true if equal; false otherwise
    */

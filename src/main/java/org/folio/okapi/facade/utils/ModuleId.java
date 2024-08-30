@@ -15,6 +15,7 @@ public class ModuleId implements Comparable<ModuleId> {
    * Construct Module ID from Module ID string or product only (moduleID without
    * version).
    * May throw IllegalArgumentException for invalid syntax for semantic version.
+   *
    * @param s Module ID or product name. The module ID does not have restrictions
    *     on characters, but a digit following a hyphen-minus marks the beginning of
    *     a semantic version .. See {@link org.folio.okapi.facade.utils.SemVer}.
@@ -34,6 +35,7 @@ public class ModuleId implements Comparable<ModuleId> {
 
   /**
    * Returns Module ID as string.
+   *
    * @return string representation
    */
   public String getId() {
@@ -42,6 +44,7 @@ public class ModuleId implements Comparable<ModuleId> {
 
   /**
    * Returns SemVer class that is part of this ModuleID.
+   *
    * @return SemVer instance or null if no semantic version is present
    */
   public SemVer getSemVer() {
@@ -50,6 +53,7 @@ public class ModuleId implements Comparable<ModuleId> {
 
   /**
    * Returns whether there's a version associated with this instance.
+   *
    * @return true if there's a version; false otherwise
    */
   public boolean hasSemVer() {
@@ -58,6 +62,7 @@ public class ModuleId implements Comparable<ModuleId> {
 
   /**
    * Whether semantic version is an NPM snapshot.
+   *
    * @return true if there's an NPM snapshot version; false otherwise
    */
   public boolean hasNpmSnapshot() {
@@ -66,6 +71,7 @@ public class ModuleId implements Comparable<ModuleId> {
 
   /**
    * Whether there's pre-release with version.
+   *
    * @return true if there's a version with pre-release; false otherwise
    */
   public boolean hasPreRelease() {
@@ -74,6 +80,7 @@ public class ModuleId implements Comparable<ModuleId> {
 
   /**
    * Returns product part of module ID (Eg mod-foo-1.2.3 returns mod-foo).
+   *
    * @return product string
    */
   public String getProduct() {
@@ -82,6 +89,7 @@ public class ModuleId implements Comparable<ModuleId> {
 
   /**
    * Compare one module with another.
+   *
    * @param other module (this compare to other)
    * @return +-5 for product diff, +-4 for major diff, +-3 for minor,
    *     +-2 for rest, +-1 for patch, 0=equal
@@ -109,6 +117,7 @@ public class ModuleId implements Comparable<ModuleId> {
 
   /**
    * Whether two products match.
+   *
    * @param that other module
    * @return true if equal; false otherwise
    */
@@ -145,10 +154,10 @@ public class ModuleId implements Comparable<ModuleId> {
 
   /**
    * Module id comparison.
+   *
    * @param i1 left
    * @param i2 right
-   * @return See
-   * {@link org.folio.okapi.facade.utils.ModuleId#compareTo(org.folio.okapi.facade.utils.ModuleId)}
+   * @return See {@link org.folio.okapi.facade.utils.ModuleId#compareTo(org.folio.okapi.facade.utils.ModuleId)}
    */
   public static int compare(String i1, String i2) {
     ModuleId m1 = new ModuleId(i1);
@@ -158,6 +167,7 @@ public class ModuleId implements Comparable<ModuleId> {
 
   /**
    * Returns newest module out of a list of modules including this.
+   *
    * @param l list of module IDs
    * @return newest module (possibly this module)
    */
@@ -175,6 +185,7 @@ public class ModuleId implements Comparable<ModuleId> {
 
   /**
    * Test whether this module has some prefix.
+   *
    * @param other module ID which serves as prefix
    * @return true if this module has prefix of other; false otherwise
    */
