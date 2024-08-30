@@ -31,15 +31,16 @@ public class TenantModuleService {
   private final TenantEntitlementManagerService entitlementService;
   private final FolioExecutionContext folioContext;
 
-  public List<ModuleDescriptor> findAll(String tenantId, String filter, Boolean full, String order, String orderBy,
-    String provide, String require, String scope, String preRelease, String npmSnapshot) {
+  public List<ModuleDescriptor> findAll(String tenantId, String filter, Boolean full, Integer latest,
+    String order, String orderBy, String provide, String require, String scope, String preRelease, String npmSnapshot) {
     var token = folioContext.getToken(); // the token is not required by the target endpoint for now
     var apps = entitlementService.getTenantApplications(tenantId, token);
 
     var mdFilter = createFilter(filter, provide, require, scope, preRelease, npmSnapshot);
     var descriptors = filterModuleDescriptors(apps, mdFilter);
 
-    var sorted = sortModuleDescriptors(descriptors, orderBy, order);
+    var latestProducts = getLatestProducts(latest, descriptors);
+    var sorted = sortModuleDescriptors(latestProducts, orderBy, order);
 
     return full
       ? sorted
@@ -65,6 +66,41 @@ public class TenantModuleService {
         toStream(appDescriptor.getUiModuleDescriptors())))
       .filter(mdFilter)
       .toList();
+  }
+
+  /**
+   * Sort descriptors in descending order and remove all but the top-N for each product.
+   * Note: copied and adopted from Okapi source code (see org.folio.okapi.util.DepResolution)
+   *
+   * @param limit max number for each module (Top-N)
+   * @param descriptors modules to consider (will be modified!)
+   */
+  private static List<ModuleDescriptor> getLatestProducts(Integer limit, List<ModuleDescriptor> descriptors) {
+    if (limit == null) {
+      return descriptors;
+    }
+
+    var result = new ArrayList<>(descriptors);
+
+    result.sort(reverseOrder(byModuleId()));
+
+    var it = result.listIterator();
+    var product = "";
+    int no = 0;
+    while (it.hasNext()) {
+      var md = it.next();
+      var moduleId = new ModuleId(md.getId());
+
+      if (!product.equals(moduleId.getProduct())) {
+        product = moduleId.getProduct();
+        no = 0;
+      } else if (no >= limit) {
+        it.remove();
+      }
+      no++;
+    }
+
+    return result;
   }
 
   private static List<ModuleDescriptor> sortModuleDescriptors(List<ModuleDescriptor> descriptors, String orderBy,
