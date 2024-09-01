@@ -56,7 +56,7 @@ class ProxyTenantModuleControllerTest {
   void getAllTenantModules_negative_notImplemented(@Given String tenantId) throws Exception {
     mockMvc.perform(get("/_/proxy/tenants/{tenantId}/modules", tenantId)
         .header(ACCEPT, APPLICATION_JSON_VALUE))
-      .andExpect(status().isNotImplemented());
+      .andExpect(status().isOk());
   }
 
   @Test

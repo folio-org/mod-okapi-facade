@@ -44,6 +44,7 @@ public class DescriptorUtils {
     Instancio.of(ModuleDescriptor.class)
       .setModel(field(ModuleDescriptor::getLaunchDescriptor), LAUNCH_DESCRIPTOR_MODEL)
       .ignore(field(ModuleDescriptor::getMetadata))
+      .ignore(field(ModuleDescriptor::getExtensions))
       .toModel();
 
   private static final Model<TenantDescriptor> TENANT_DESCRIPTOR_MODEL =
