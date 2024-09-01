@@ -1,4 +1,4 @@
-package org.folio.okapi.facade.integration.tm;
+package org.folio.okapi.facade.integration.mt;
 
 import static org.folio.common.utils.FeignClientTlsUtils.buildTargetFeignClient;
 

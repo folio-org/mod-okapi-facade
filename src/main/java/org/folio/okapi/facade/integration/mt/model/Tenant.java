@@ -1,5 +1,6 @@
-package org.folio.okapi.facade.integration.ma.model;
+package org.folio.okapi.facade.integration.mt.model;
 
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,8 +8,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "of")
-public class Dependency {
+public class Tenant {
 
+  private UUID id;
   private String name;
-  private String version;
+  private String description;
 }

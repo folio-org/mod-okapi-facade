@@ -1,8 +1,9 @@
-package org.folio.okapi.facade.service.tenant;
+package org.folio.okapi.facade.service;
 
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toCollection;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.folio.common.utils.CollectionUtils.toStream;
 import static org.folio.okapi.facade.util.PaginationUtil.getWithPagination;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -12,19 +13,19 @@ import java.util.List;
 import java.util.Objects;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import org.folio.common.domain.model.ApplicationDescriptor;
+import org.folio.common.domain.model.InterfaceDescriptor;
 import org.folio.common.domain.model.ModuleDescriptor;
-import org.folio.okapi.facade.domain.dto.InterfaceDescriptor;
+import org.folio.common.domain.model.ResultList;
 import org.folio.okapi.facade.integration.ma.MgrApplicationsClient;
-import org.folio.okapi.facade.integration.ma.model.ApplicationDescriptor;
-import org.folio.okapi.facade.integration.model.ResultList;
+import org.folio.okapi.facade.integration.mt.MgrTenantsClient;
+import org.folio.okapi.facade.integration.mt.model.Tenant;
 import org.folio.okapi.facade.integration.mte.MgrTenantEntitlementsClient;
 import org.folio.okapi.facade.integration.mte.model.Entitlement;
-import org.folio.okapi.facade.integration.tm.MgrTenantsClient;
-import org.folio.okapi.facade.integration.tm.model.Tenant;
-import org.folio.okapi.facade.mapper.InterfaceDescriptorMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +36,6 @@ public class TenantInterfacesService {
   private final MgrApplicationsClient mgrApplicationsClient;
   private final MgrTenantEntitlementsClient mgrTenantEntitlementsClient;
   private final MgrTenantsClient mgrTenantsClient;
-  private final InterfaceDescriptorMapper mapper;
 
   @Value("${application.mte.querylimit:500}") private int entitlementsQueryLimit = 500;
   @Value("${application.ma.querylimit:500}") private int applicationsQueryLimit = 500;
@@ -50,15 +50,20 @@ public class TenantInterfacesService {
     }
 
     var appDescriptors = getAppDescriptors(entitlements, token);
-    var moduleDescriptorsStream =
-      appDescriptors.stream().map(ApplicationDescriptor::getModuleDescriptors).filter(Objects::nonNull)
-        .flatMap(Collection::stream);
-    var interfaceDescriptorsStream =
-      moduleDescriptorsStream.map(ModuleDescriptor::getProvides).filter(Objects::nonNull).flatMap(Collection::stream);
-    var filteredInterfaceDescriptors =
-      interfaceDescriptorsStream.filter(Objects::nonNull).filter(getFilter(interfaceType));
 
-    return map(filteredInterfaceDescriptors, full).toList();
+    var moduleDescriptors = extract(toStream(appDescriptors), ApplicationDescriptor::getModuleDescriptors);
+    var providedInterfaces = extract(moduleDescriptors, ModuleDescriptor::getProvides);
+
+    return providedInterfaces.filter(Objects::nonNull)
+      .filter(getFilter(interfaceType))
+      .map(desc -> full ? desc : new InterfaceDescriptor(desc.getId(), desc.getVersion()))
+      .toList();
+  }
+
+  private static <S, T> Stream<T> extract(Stream<S> stream, Function<S, List<T>> mapper) {
+    return stream.map(mapper)
+      .filter(Objects::nonNull)
+      .flatMap(Collection::stream);
   }
 
   private UUID getTenantId(String tenantName, String token) {
@@ -69,12 +74,7 @@ public class TenantInterfacesService {
     return tenants.getRecords().stream().map(Tenant::getId).findFirst().orElseThrow();
   }
 
-  private Stream<InterfaceDescriptor> map(
-    Stream<org.folio.common.domain.model.InterfaceDescriptor> interfaceDescriptors, boolean isFull) {
-    return interfaceDescriptors.map(!isFull ? mapper::mapSimple : mapper::map);
-  }
-
-  private Predicate<? super org.folio.common.domain.model.InterfaceDescriptor> getFilter(String interfaceType) {
+  private Predicate<? super InterfaceDescriptor> getFilter(String interfaceType) {
     if (isBlank(interfaceType)) {
       return data -> true;
     }

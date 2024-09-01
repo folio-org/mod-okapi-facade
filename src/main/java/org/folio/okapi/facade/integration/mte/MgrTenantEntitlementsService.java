@@ -1,4 +1,4 @@
-package org.folio.okapi.facade.integration.te;
+package org.folio.okapi.facade.integration.mte;
 
 import feign.FeignException;
 import java.util.List;
@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 @Log4j2
 @Service
 @RequiredArgsConstructor
-public class TenantEntitlementManagerService {
+public class MgrTenantEntitlementsService {
 
-  private final TenantEntitlementManagerClient client;
+  private final MgrTenantEntitlementsClient client;
 
   @Cacheable(cacheNames = "tenant-applications", key = "#tenantName")
   public List<ApplicationDescriptor> getTenantApplications(String tenantName, String authToken) {

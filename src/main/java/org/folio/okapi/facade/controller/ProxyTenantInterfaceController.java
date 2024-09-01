@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.folio.common.domain.model.InterfaceDescriptor;
 import org.folio.okapi.facade.domain.dto.TenantModuleDescriptor;
 import org.folio.okapi.facade.rest.resource.ProxyTenantInterfaceApi;
-import org.folio.okapi.facade.service.tenant.TenantInterfacesService;
+import org.folio.okapi.facade.service.TenantInterfacesService;
 import org.folio.spring.FolioExecutionContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

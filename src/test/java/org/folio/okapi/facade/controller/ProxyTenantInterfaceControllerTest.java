@@ -15,18 +15,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import feign.Client;
 import java.util.List;
 import java.util.UUID;
+import org.folio.common.domain.model.ApplicationDescriptor;
 import org.folio.common.domain.model.InterfaceDescriptor;
 import org.folio.common.domain.model.ModuleDescriptor;
+import org.folio.common.domain.model.ResultList;
 import org.folio.common.domain.model.RoutingEntry;
 import org.folio.okapi.facade.integration.ma.MgrApplicationsClient;
-import org.folio.okapi.facade.integration.ma.model.ApplicationDescriptor;
-import org.folio.okapi.facade.integration.model.ResultList;
+import org.folio.okapi.facade.integration.mt.MgrTenantsClient;
+import org.folio.okapi.facade.integration.mt.model.Tenant;
 import org.folio.okapi.facade.integration.mte.MgrTenantEntitlementsClient;
 import org.folio.okapi.facade.integration.mte.model.Entitlement;
-import org.folio.okapi.facade.integration.tm.MgrTenantsClient;
-import org.folio.okapi.facade.integration.tm.model.Tenant;
-import org.folio.okapi.facade.mapper.InterfaceDescriptorMapper;
-import org.folio.okapi.facade.service.tenant.TenantInterfacesService;
+import org.folio.okapi.facade.service.TenantInterfacesService;
 import org.folio.spring.config.FolioSpringConfiguration;
 import org.folio.spring.scope.FolioExecutionScopeConfig;
 import org.folio.spring.service.TenantService;
@@ -42,8 +41,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 @UnitTest
-@WebMvcTest({ProxyTenantInterfaceController.class, TenantInterfacesService.class, InterfaceDescriptorMapper.class,
-  ApiExceptionHandler.class})
+@WebMvcTest({ProxyTenantInterfaceController.class, TenantInterfacesService.class, ApiExceptionHandler.class})
 @Import({FolioExecutionScopeConfig.class, FolioSpringConfiguration.class})
 @ExtendWith(InstancioExtension.class)
 class ProxyTenantInterfaceControllerTest {
@@ -84,7 +82,7 @@ class ProxyTenantInterfaceControllerTest {
     result.getProvides().get(0).setInterfaceType("system");
     when(mgrApplicationsClient.queryApplicationDescriptors(eq("id==app1 OR id==app2 OR id==app3"), anyBoolean(),
       anyInt(), anyInt(), any())).thenReturn(
-      ResultList.of(1, List.of(ApplicationDescriptor.builder().moduleDescriptors(List.of(result)).build())));
+      ResultList.of(1, List.of(new ApplicationDescriptor().moduleDescriptors(List.of(result)))));
     mockMvc.perform(
         get("/_/proxy/tenants/{tenantId}/interfaces?full=true", tenantName).header(ACCEPT, APPLICATION_JSON_VALUE))
       .andExpect(status().isOk()).andExpect(jsonPath("$[0].id", is("provider1")))

@@ -11,23 +11,21 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.folio.common.domain.model.ApplicationDescriptor;
 import org.folio.common.domain.model.InterfaceDescriptor;
 import org.folio.common.domain.model.ModuleDescriptor;
+import org.folio.common.domain.model.ResultList;
 import org.folio.common.domain.model.RoutingEntry;
 import org.folio.okapi.facade.integration.ma.MgrApplicationsClient;
-import org.folio.okapi.facade.integration.ma.model.ApplicationDescriptor;
-import org.folio.okapi.facade.integration.model.ResultList;
+import org.folio.okapi.facade.integration.mt.MgrTenantsClient;
+import org.folio.okapi.facade.integration.mt.model.Tenant;
 import org.folio.okapi.facade.integration.mte.MgrTenantEntitlementsClient;
 import org.folio.okapi.facade.integration.mte.model.Entitlement;
-import org.folio.okapi.facade.integration.tm.MgrTenantsClient;
-import org.folio.okapi.facade.integration.tm.model.Tenant;
-import org.folio.okapi.facade.mapper.InterfaceDescriptorMapper;
+import org.folio.okapi.facade.service.TenantInterfacesService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,7 +35,6 @@ class TenantInterfacesServiceTest {
   @Mock MgrApplicationsClient mgrApplicationsClient;
   @Mock MgrTenantEntitlementsClient mgrTenantEntitlementsClient;
   @Mock MgrTenantsClient mgrTenantsClient;
-  @Spy InterfaceDescriptorMapper mapper = Mappers.getMapper(InterfaceDescriptorMapper.class);
 
   @Test
   void getTenantInterfaces_positive_interfacesReturned() {
@@ -60,7 +57,7 @@ class TenantInterfacesServiceTest {
     mockData.getProvides().get(0).setInterfaceType("system");
     when(mgrApplicationsClient.queryApplicationDescriptors(eq("id==app1 OR id==app2 OR id==app3"), anyBoolean(),
       anyInt(), anyInt(), any())).thenReturn(
-      ResultList.of(1, of(ApplicationDescriptor.builder().moduleDescriptors(of(mockData)).build())));
+      ResultList.of(1, of(new ApplicationDescriptor().moduleDescriptors(of(mockData)))));
     var result = unit.getTenantInterfaces("user token", tenantName, true, "system");
     assertThat(result).hasSize(1);
     assertThat(result.get(0).getId()).isEqualTo(mockData.getProvides().get(0).getId());

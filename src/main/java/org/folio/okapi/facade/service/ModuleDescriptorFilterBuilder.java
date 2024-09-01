@@ -65,7 +65,7 @@ final class ModuleDescriptorFilterBuilder {
   }
 
   /**
-   * Return boolean value of preRelease/npmSnapshot parameter
+   * Return boolean value of preRelease/npmSnapshot parameter.
    * Note: copied and adopted from Okapi source code (see org.folio.okapi.util.ModuleVersionFilter)
    *
    * @param param value of preRelease/npmSnapshot parameter in query

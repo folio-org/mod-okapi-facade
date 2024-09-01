@@ -3,7 +3,7 @@ package org.folio.okapi.facade.utils;
 import java.util.Collection;
 
 /**
- * Copied from okapi-common/src/main/java/org/folio/okapi/common/ModuleId.java
+ * Copied from okapi-common/src/main/java/org/folio/okapi/common/ModuleId.java.
  */
 public class ModuleId implements Comparable<ModuleId> {
 

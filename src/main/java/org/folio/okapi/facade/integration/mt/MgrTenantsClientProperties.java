@@ -1,4 +1,4 @@
-package org.folio.okapi.facade.integration.te;
+package org.folio.okapi.facade.integration.mt;
 
 import lombok.Data;
 import org.folio.common.configuration.properties.TlsProperties;
@@ -7,13 +7,8 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "application.mte")
-public class TenantEntitlementManagerProperties {
-
+@ConfigurationProperties(prefix = "application.mt")
+public class MgrTenantsClientProperties {
   private String url;
-
-  /**
-   * Properties object with an information about TLS connection.
-   */
   private TlsProperties tls;
 }

@@ -1,10 +1,10 @@
-package org.folio.okapi.facade.integration.tm;
+package org.folio.okapi.facade.integration.mt;
 
 import static org.folio.common.utils.OkapiHeaders.TOKEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import org.folio.okapi.facade.integration.model.ResultList;
-import org.folio.okapi.facade.integration.tm.model.Tenant;
+import org.folio.common.domain.model.ResultList;
+import org.folio.okapi.facade.integration.mt.model.Tenant;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
