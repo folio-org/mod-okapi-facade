@@ -75,10 +75,26 @@ management:
 
 application:
   environment: ${ENV:folio}
+  ma:
+    url: ${AM_URL}
+    querylimit: 500
+    tls:
+      enabled: ${AM_TLS_ENABLED:false}
+      trust-store-path: ${AM_TLS_TRUSTSTORE_PATH:}
+      trust-store-password: ${AM_TLS_TRUSTSTORE_PASSWORD:}
+      trust-store-type: ${AM_TLS_TRUSTSTORE_TYPE:}
   mte:
     url: ${TE_URL:${te.url:http://mgr-tenant-entitlements:8081}}
+    querylimit: 500
     tls:
       enabled: ${TE_TLS_ENABLED:false}
       trust-store-path: ${TE_TLS_TRUSTSTORE_PATH:}
       trust-store-password: ${TE_TLS_TRUSTSTORE_PASSWORD:}
       trust-store-type: ${TE_TLS_TRUSTSTORE_TYPE:}
+  mt:
+    url: ${TM_URL}
+    tls:
+      enabled: ${TM_TLS_ENABLED:false}
+      trust-store-path: ${TM_TLS_TRUSTSTORE_PATH:}
+      trust-store-password: ${TM_TLS_TRUSTSTORE_PASSWORD:}
+      trust-store-type: ${TM_TLS_TRUSTSTORE_TYPE:}
