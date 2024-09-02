@@ -1,9 +1,11 @@
 package org.folio.okapi.facade.support;
 
+import static org.instancio.Instancio.gen;
 import static org.instancio.Select.field;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.List;
 import lombok.experimental.UtilityClass;
 import org.folio.common.domain.model.LaunchDescriptor;
 import org.folio.common.domain.model.ModuleDescriptor;
@@ -75,6 +77,16 @@ public class DescriptorUtils {
 
   public static ModuleDescriptor moduleDescriptor() {
     return Instancio.of(MODULE_DESCRIPTOR_MODEL).create();
+  }
+
+  public static List<ModuleDescriptor> moduleDescriptors(int maxSize) {
+    return moduleDescriptors(1, maxSize);
+  }
+
+  public static List<ModuleDescriptor> moduleDescriptors(int minSize, int maxSize) {
+    return Instancio.ofList(MODULE_DESCRIPTOR_MODEL)
+      .size(gen().ints().range(minSize, maxSize).get())
+      .create();
   }
 
   public static TenantDescriptor tenantDescriptor() {

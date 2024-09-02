@@ -1,4 +1,4 @@
-package org.folio.okapi.facade.service.tenant;
+package org.folio.okapi.facade.service;
 
 import static java.util.List.of;
 import static java.util.UUID.randomUUID;
@@ -21,7 +21,6 @@ import org.folio.okapi.facade.integration.mt.MgrTenantsClient;
 import org.folio.okapi.facade.integration.mt.model.Tenant;
 import org.folio.okapi.facade.integration.mte.MgrTenantEntitlementsClient;
 import org.folio.okapi.facade.integration.mte.model.Entitlement;
-import org.folio.okapi.facade.service.TenantInterfacesService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

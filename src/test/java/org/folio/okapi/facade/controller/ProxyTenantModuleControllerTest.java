@@ -1,14 +1,20 @@
 package org.folio.okapi.facade.controller;
 
+import static java.lang.Boolean.TRUE;
+import static org.folio.okapi.facade.support.DescriptorUtils.moduleDescriptors;
 import static org.folio.test.TestUtils.asJsonString;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.List;
+import org.folio.common.domain.model.ModuleDescriptor;
 import org.folio.okapi.facade.domain.dto.TenantModuleDescriptor;
 import org.folio.okapi.facade.service.TenantModuleService;
 import org.folio.okapi.facade.support.DescriptorUtils.GivenTenantModuleDescriptor;
@@ -53,10 +59,16 @@ class ProxyTenantModuleControllerTest {
   }
 
   @Test
-  void getAllTenantModules_negative_notImplemented(@Given String tenantId) throws Exception {
+  void getAllTenantModules_positive(@Given String tenantId) throws Exception {
+    List<ModuleDescriptor> descriptors = moduleDescriptors(10);
+    when(service.findAll(tenantId, null, false, null, null, null, null, null, null, TRUE.toString(), TRUE.toString()))
+      .thenReturn(descriptors);
+
     mockMvc.perform(get("/_/proxy/tenants/{tenantId}/modules", tenantId)
         .header(ACCEPT, APPLICATION_JSON_VALUE))
-      .andExpect(status().isOk());
+      .andExpect(status().isOk())
+      .andExpect(content().contentType(APPLICATION_JSON))
+      .andExpect(content().json(asJsonString(descriptors), true));
   }
 
   @Test
