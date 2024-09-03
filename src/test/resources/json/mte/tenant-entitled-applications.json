@@ -3318,7 +3318,7 @@
     ],
     "uiModules": [
       {
-        "id": "folio_authorization-policies-1.2.1",
+        "id": "folio_authorization-policies-1.2.100000310",
         "name": "folio_authorization-policies",
         "version": "1.2.1"
       },
@@ -5361,7 +5361,7 @@
     ],
     "uiModuleDescriptors": [
       {
-        "id": "folio_authorization-policies-1.2.1",
+        "id": "folio_authorization-policies-1.2.100000310",
         "name": "FOLIO app for Authorization Policies",
         "requires": [
           {

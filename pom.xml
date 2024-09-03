@@ -37,7 +37,7 @@
     <hypersistence-utils-hibernate-63.version>3.8.2</hypersistence-utils-hibernate-63.version>
     <folio-spring-support.version>8.1.2</folio-spring-support.version>
     <folio-java-checkstyle.version>1.0.1</folio-java-checkstyle.version>
-    <applications-poc-tools.version>1.5.6-SNAPSHOT</applications-poc-tools.version>
+    <applications-poc-tools.version>1.5.7-SNAPSHOT</applications-poc-tools.version>
     <coffee-boots.version>4.0.0</coffee-boots.version>
 
     <okapi-facade.yaml-file>${project.basedir}/src/main/resources/swagger.api/okapi-facade.yaml

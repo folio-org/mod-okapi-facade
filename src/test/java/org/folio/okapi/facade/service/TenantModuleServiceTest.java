@@ -4,6 +4,7 @@ import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
 import static org.apache.commons.collections4.ListUtils.union;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.folio.common.utils.CollectionUtils.toStream;
 import static org.folio.test.TestConstants.OKAPI_AUTH_TOKEN;
 import static org.folio.test.TestConstants.TENANT_ID;
@@ -28,6 +29,7 @@ import org.folio.spring.FolioExecutionContext;
 import org.folio.test.TestUtils;
 import org.folio.test.types.UnitTest;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +40,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @UnitTest
 @ExtendWith(MockitoExtension.class)
 class TenantModuleServiceTest {
+
+  private static List<ApplicationDescriptor> testAppDescriptors;
 
   @InjectMocks private TenantModuleService service;
   @Mock private MgrTenantEntitlementsService entitlementService;
@@ -51,13 +55,19 @@ class TenantModuleServiceTest {
   private String orderBy;
   private String provide;
   private String require;
-  private String scope;
+  private final String scope = null;
   private String preRelease;
-  private String npmSnapshot;
+  private final String npmSnapshot = null;
+
+  @BeforeAll
+  static void beforeAll() {
+    testAppDescriptors = testAppDescriptors(); // read once, should not be modified
+  }
 
   @BeforeEach
   void setUp() {
     when(folioContext.getToken()).thenReturn(OKAPI_AUTH_TOKEN);
+    when(entitlementService.getTenantApplications(tenantId, OKAPI_AUTH_TOKEN)).thenReturn(testAppDescriptors);
   }
 
   @AfterEach
@@ -67,64 +77,123 @@ class TenantModuleServiceTest {
 
   @Test
   void findAll_positive_defaultParams() {
-    var appDescriptors = testAppDescriptors();
-    when(entitlementService.getTenantApplications(tenantId, OKAPI_AUTH_TOKEN)).thenReturn(appDescriptors);
-
     var found = findAll();
 
-    var expected = extractAllModuleDescriptors(appDescriptors, byModuleId());
+    var expected = extractAllModuleDescriptors(testAppDescriptors, byModuleId());
     assertThat(found).containsExactlyElementsOf(expected);
   }
 
   @Test
   void findAll_positive_fullDescriptors() {
-    var appDescriptors = testAppDescriptors();
-    when(entitlementService.getTenantApplications(tenantId, OKAPI_AUTH_TOKEN)).thenReturn(appDescriptors);
-
     full = true;
     var found = findAll();
 
-    var expected = extractAllModuleDescriptors(appDescriptors, byModuleId());
+    var expected = extractAllModuleDescriptors(testAppDescriptors, byModuleId());
     assertThat(found).containsExactlyElementsOf(expected);
   }
+
   @Test
   void findAll_positive_moduleIdFilter() {
-    var appDescriptors = testAppDescriptors();
-    when(entitlementService.getTenantApplications(tenantId, OKAPI_AUTH_TOKEN)).thenReturn(appDescriptors);
-
     filter = "mod-configuration";
     var found = findAll();
 
-    var expected = extractAllModuleDescriptors(appDescriptors, moduleNameIn(filter), byModuleId());
+    var expected = extractAllModuleDescriptors(testAppDescriptors, moduleNameIn(filter), byModuleId());
     assertThat(found).containsExactlyElementsOf(expected);
   }
 
   @Test
   void findAll_positive_providedFilter() {
-    var appDescriptors = testAppDescriptors();
-    when(entitlementService.getTenantApplications(tenantId, OKAPI_AUTH_TOKEN)).thenReturn(appDescriptors);
-
     provide = "configuration=2.0,users=16.1";
     var found = findAll();
 
-    var expected = extractAllModuleDescriptors(appDescriptors, moduleNameIn("mod-configuration", "mod-users"),
+    var expected = extractAllModuleDescriptors(testAppDescriptors, moduleNameIn("mod-configuration", "mod-users"),
       byModuleId());
     assertThat(found).containsExactlyElementsOf(expected);
   }
 
   @Test
   void findAll_positive_requiredFilter() {
-    var appDescriptors = testAppDescriptors();
-    when(entitlementService.getTenantApplications(tenantId, OKAPI_AUTH_TOKEN)).thenReturn(appDescriptors);
-
     require = "configuration=2.0,users=16.1";
     var found = findAll();
 
-    var expected = extractAllModuleDescriptors(appDescriptors,
+    var expected = extractAllModuleDescriptors(testAppDescriptors,
       moduleNameIn("folio_stripes-core", "folio_stripes-smart-components", "mod-login-keycloak", "mod-notes",
         "mod-password-validator", "mod-users-bl", "mod-users-keycloak"),
       byModuleId());
     assertThat(found).containsExactlyElementsOf(expected);
+  }
+
+  @Test
+  void findAll_positive_requiredFilterToGetOptional() {
+    require = "login-saml=2.0,authtoken=2.0";
+    var found = findAll();
+
+    var expected = extractAllModuleDescriptors(testAppDescriptors,
+      moduleNameIn("mod-users-bl", "folio_stripes-core"),
+      byModuleId());
+    assertThat(found).containsExactlyElementsOf(expected);
+  }
+
+  @Test
+  void findAll_positive_preReleaseFilter() {
+    preRelease = "only";
+    var found = findAll();
+
+    var expected = extractAllModuleDescriptors(testAppDescriptors,
+      moduleNameIn("folio_authorization-policies"),
+      byModuleId());
+    assertThat(found).containsExactlyElementsOf(expected);
+  }
+
+  @Test
+  void findAll_positive_moduleIdFilterAndLatestProduct() {
+    filter = "mod-configuration";
+    latest = 1;
+    var found = findAll();
+
+    var expected = extractAllModuleDescriptors(testAppDescriptors,
+      moduleNameIn(filter),
+      byModuleId());
+    assertThat(found).containsExactlyElementsOf(expected);
+  }
+
+  @Test
+  void findAll_positive_orderByIdDescending() {
+    orderBy = "id";
+    order = "desc";
+    var found = findAll();
+
+    var expected = extractAllModuleDescriptors(testAppDescriptors, byModuleId().reversed());
+    assertThat(found).containsExactlyElementsOf(expected);
+  }
+
+  @Test
+  void findAll_positive_orderByIdAscending() {
+    orderBy = "id";
+    order = "asc";
+    var found = findAll();
+
+    var expected = extractAllModuleDescriptors(testAppDescriptors, byModuleId());
+    assertThat(found).containsExactlyElementsOf(expected);
+  }
+
+  @Test
+  void findAll_negative_orderByIdUnknown() {
+    orderBy = "some";
+
+    assertThatThrownBy(this::findAll)
+      .isInstanceOf(IllegalArgumentException.class)
+      .hasMessage("unknown orderBy field: " + orderBy);
+  }
+
+  @Test
+  void findAll_negative_orderUnknown() {
+    orderBy = "id";
+    order = "some";
+
+    assertThatThrownBy(this::findAll)
+      .isInstanceOf(IllegalArgumentException.class)
+      .hasMessage("invalid order value: " + order);
   }
 
   private List<ModuleDescriptor> findAll() {
