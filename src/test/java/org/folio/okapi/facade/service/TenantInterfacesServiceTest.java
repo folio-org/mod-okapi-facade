@@ -21,12 +21,14 @@ import org.folio.okapi.facade.integration.mt.MgrTenantsClient;
 import org.folio.okapi.facade.integration.mt.model.Tenant;
 import org.folio.okapi.facade.integration.mte.MgrTenantEntitlementsClient;
 import org.folio.okapi.facade.integration.mte.model.Entitlement;
+import org.folio.test.types.UnitTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+@UnitTest
 @ExtendWith(MockitoExtension.class)
 class TenantInterfacesServiceTest {
 

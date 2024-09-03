@@ -3,8 +3,10 @@ package org.folio.okapi.facade.util;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import org.folio.test.types.UnitTest;
 import org.junit.jupiter.api.Test;
 
+@UnitTest
 class PaginationUtilTest {
 
   @Test

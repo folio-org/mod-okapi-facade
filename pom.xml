@@ -69,7 +69,10 @@
       src/main/java/**/mapper/**/*,
       src/main/java/**/integration/**/model/**/*,
       src/main/java/**/*Application.java,
-      src/main/java/**/*Configuration.java
+      src/main/java/**/*Configuration.java,
+      <!-- the next two are copied from okapi source code -->
+      src/main/java/**/ModuleId.java,
+      src/main/java/**/SemVer.java
     </sonar.exclusions>
   </properties>
 
@@ -620,7 +623,11 @@
           src/main/java/**/rest/resource/**/*,
           src/main/java/**/mapper/**/*,
           src/main/java/**/integration/**/model/**/*,
-          src/main/java/**/*Application.java
+          src/main/java/**/*Application.java,
+          src/main/java/**/*Configuration.java,
+          <!-- the next two are copied from okapi source code -->
+          src/main/java/**/ModuleId.java,
+          src/main/java/**/SemVer.java
         </sonar.exclusions>
         <sonar.coverage.jacoco.xmlReportPaths>
           target/site/jacoco-aggregate/jacoco.xml
