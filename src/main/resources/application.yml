@@ -77,7 +77,7 @@ application:
   environment: ${ENV:folio}
   ma:
     url: ${AM_URL:}
-    querylimit: 500
+    query-limit: 500
     tls:
       enabled: ${AM_TLS_ENABLED:false}
       trust-store-path: ${AM_TLS_TRUSTSTORE_PATH:}
@@ -85,7 +85,7 @@ application:
       trust-store-type: ${AM_TLS_TRUSTSTORE_TYPE:}
   mte:
     url: ${TE_URL:}
-    querylimit: 500
+    query-limit: 500
     tls:
       enabled: ${TE_TLS_ENABLED:false}
       trust-store-path: ${TE_TLS_TRUSTSTORE_PATH:}

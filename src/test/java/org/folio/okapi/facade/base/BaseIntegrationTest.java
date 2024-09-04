@@ -1,15 +1,18 @@
 package org.folio.okapi.facade.base;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.function.Function.identity;
 import static org.folio.test.TestConstants.OKAPI_AUTH_TOKEN;
 import static org.folio.test.TestConstants.TENANT_ID;
 import static org.folio.test.TestUtils.asJsonString;
+import static org.folio.test.TestUtils.readString;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.function.Function;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.folio.spring.integration.XOkapiHeaders;
@@ -29,6 +32,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @Log4j2
 @EnableWireMock
@@ -59,9 +65,16 @@ public abstract class BaseIntegrationTest extends BaseBackendIntegrationTest {
   }
 
   public static ResultActions attemptGet(String uri, Object... args) throws Exception {
-    return mockMvc.perform(get(uri, args)
+    return attemptGet(uri, args, identity());
+  }
+
+  public static ResultActions attemptGet(String uri, Object[] args,
+    Function<MockHttpServletRequestBuilder, MockHttpServletRequestBuilder> additionalConfigurer) throws Exception {
+    var requestBuilder = get(uri, args)
       .headers(okapiHeaders())
-      .contentType(APPLICATION_JSON));
+      .contentType(APPLICATION_JSON);
+
+    return mockMvc.perform(additionalConfigurer.apply(requestBuilder));
   }
 
   protected static HttpHeaders okapiHeaders() {
@@ -70,6 +83,11 @@ public abstract class BaseIntegrationTest extends BaseBackendIntegrationTest {
     headers.add(XOkapiHeaders.TOKEN, OKAPI_AUTH_TOKEN);
     headers.add(XOkapiHeaders.TENANT, TENANT_ID);
     return headers;
+  }
+
+  protected static ResultMatcher jsonStrict(String filePath) {
+    String path = "json/" + filePath;
+    return MockMvcResultMatchers.content().json(readString(path), true);
   }
 
   @SneakyThrows

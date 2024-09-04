@@ -1,7 +1,12 @@
 {
   "request": {
     "method": "GET",
-    "url": "/entitlements/test/applications",
+    "urlPath": "/entitlements/test/applications",
+    "queryParameters": {
+      "limit": {
+        "equalTo": "500"
+      }
+    },
     "headers": {
       "x-okapi-token": {
         "equalTo": "X-Okapi-Token test value"

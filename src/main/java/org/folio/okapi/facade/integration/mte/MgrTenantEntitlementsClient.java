@@ -26,5 +26,6 @@ public interface MgrTenantEntitlementsClient {
 
   @GetMapping(value = "/entitlements/{tenant}/applications", consumes = APPLICATION_JSON_VALUE)
   ResultList<ApplicationDescriptor> getEntitledApplications(@PathVariable @RequestHeader(TENANT) String tenant,
+    @RequestParam(value = "limit", required = false) Integer limit,
     @RequestHeader(TOKEN) String token);
 }

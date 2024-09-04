@@ -10,6 +10,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
+import feign.FeignException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import java.util.List;
@@ -42,8 +43,8 @@ public class ApiExceptionHandler {
    * @param exception {@link EntityNotFoundException} object
    * @return {@link ResponseEntity} with {@link ErrorResponse} body.
    */
-  @ExceptionHandler(EntityNotFoundException.class)
-  public ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException exception) {
+  @ExceptionHandler({EntityNotFoundException.class, FeignException.NotFound.class})
+  public ResponseEntity<ErrorResponse> handleEntityNotFoundException(Exception exception) {
     logException(DEBUG, exception);
     return buildResponseEntity(exception, NOT_FOUND, NOT_FOUND_ERROR);
   }
@@ -103,6 +104,7 @@ public class ApiExceptionHandler {
     MissingRequestHeaderException.class,
     HttpMediaTypeNotSupportedException.class,
     MethodArgumentTypeMismatchException.class,
+    FeignException.BadRequest.class
   })
   public ResponseEntity<ErrorResponse> handleValidationExceptions(Exception exception) {
     logException(DEBUG, exception);

@@ -37,8 +37,8 @@ public class TenantInterfacesService {
   private final MgrTenantEntitlementsClient mgrTenantEntitlementsClient;
   private final MgrTenantsClient mgrTenantsClient;
 
-  @Value("${application.mte.querylimit:500}") private int entitlementsQueryLimit = 500;
-  @Value("${application.ma.querylimit:500}") private int applicationsQueryLimit = 500;
+  @Value("${application.mte.query-limit:500}") private int entitlementsQueryLimit = 500;
+  @Value("${application.ma.query-limit:500}") private int applicationsQueryLimit = 500;
 
   public List<InterfaceDescriptor> getTenantInterfaces(String token, String tenantName, boolean full,
     String interfaceType) {

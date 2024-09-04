@@ -1,0 +1,35 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/entitlements/unknown-tenant/applications",
+    "queryParameters": {
+      "limit": {
+        "equalTo": "500"
+      }
+    },
+    "headers": {
+      "x-okapi-token": {
+        "equalTo": "X-Okapi-Token test value"
+      },
+      "x-okapi-tenant": {
+        "equalTo": "unknown-tenant"
+      }
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "errors": [
+        {
+          "message": "Tenant is not found by name: unknown-tenant",
+          "type": "EntityNotFoundException",
+          "code": "not_found_error"
+        }
+      ],
+      "total_records": 1
+    }
+  }
+}
