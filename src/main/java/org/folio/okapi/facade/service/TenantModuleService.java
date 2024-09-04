@@ -31,7 +31,8 @@ public class TenantModuleService {
   private final MgrTenantEntitlementsService entitlementService;
   private final FolioExecutionContext folioContext;
 
-  public List<ModuleDescriptor> findAll(String tenantId, String filter, Boolean full, Integer latest,
+  @SuppressWarnings("java:S107")
+  public List<ModuleDescriptor> findAll(String tenantId, String filter, boolean full, Integer latest,
     String order, String orderBy, String provide, String require, String scope, String preRelease, String npmSnapshot) {
     var token = folioContext.getToken(); // the token is not required by the target endpoint for now
     var apps = entitlementService.getTenantApplications(tenantId, token);

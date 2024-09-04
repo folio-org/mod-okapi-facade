@@ -72,6 +72,7 @@ final class ModuleDescriptorFilterBuilder {
    * @return returns false for "false", true for "only", and Optional.empty() for "true" and null/undefined
    * @throws IllegalArgumentException on invalid value
    */
+  @SuppressWarnings("java:S2447")
   private static Boolean toBoolean(String param) {
     if (isBlank(param) || "true".equals(param)) {
       return null;

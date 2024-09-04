@@ -16,7 +16,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 @IntegrationTest
-public class TenantModuleIT extends BaseIntegrationTest {
+class TenantModuleIT extends BaseIntegrationTest {
 
   private static final String TENANT_UNKNOWN = "unknown-tenant";
 
