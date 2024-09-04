@@ -1,11 +1,14 @@
 package org.folio.okapi.facade.controller;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.apache.logging.log4j.Level.DEBUG;
 import static org.apache.logging.log4j.Level.WARN;
 import static org.folio.common.domain.model.error.ErrorCode.NOT_FOUND_ERROR;
+import static org.folio.common.domain.model.error.ErrorCode.SERVICE_ERROR;
 import static org.folio.common.domain.model.error.ErrorCode.UNKNOWN_ERROR;
 import static org.folio.common.domain.model.error.ErrorCode.VALIDATION_ERROR;
+import static org.folio.common.utils.ExceptionHandlerUtils.buildErrorResponse;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -22,13 +25,16 @@ import org.folio.common.domain.model.error.Error;
 import org.folio.common.domain.model.error.ErrorCode;
 import org.folio.common.domain.model.error.ErrorResponse;
 import org.folio.common.domain.model.error.Parameter;
+import org.folio.okapi.facade.integration.IntegrationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -47,6 +53,40 @@ public class ApiExceptionHandler {
   public ResponseEntity<ErrorResponse> handleEntityNotFoundException(Exception exception) {
     logException(DEBUG, exception);
     return buildResponseEntity(exception, NOT_FOUND, NOT_FOUND_ERROR);
+  }
+
+  /**
+   * Catches and handles all exceptions for type {@link HttpMessageNotReadableException}.
+   *
+   * @param exception {@link HttpMessageNotReadableException} object
+   * @return {@link ResponseEntity} with {@link ErrorResponse} body.
+   */
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<ErrorResponse> handlerHttpMessageNotReadableException(
+    HttpMessageNotReadableException exception) {
+
+    return Optional.ofNullable(exception.getCause())
+      .map(Throwable::getCause)
+      .filter(IllegalArgumentException.class::isInstance)
+      .map(IllegalArgumentException.class::cast)
+      .map(this::handleValidationExceptions)
+      .orElseGet(() -> {
+        logException(DEBUG, exception);
+        return buildResponseEntity(exception, BAD_REQUEST, VALIDATION_ERROR);
+      });
+  }
+
+  /**
+   * Catches and handles all exceptions for type {@link MissingServletRequestParameterException}.
+   *
+   * @param exception {@link MissingServletRequestParameterException} to process
+   * @return {@link ResponseEntity} with {@link ErrorResponse} body
+   */
+  @ExceptionHandler(MissingServletRequestParameterException.class)
+  public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(
+    MissingServletRequestParameterException exception) {
+    logException(DEBUG, exception);
+    return buildResponseEntity(exception, BAD_REQUEST, VALIDATION_ERROR);
   }
 
   /**
@@ -109,6 +149,20 @@ public class ApiExceptionHandler {
   public ResponseEntity<ErrorResponse> handleValidationExceptions(Exception exception) {
     logException(DEBUG, exception);
     return buildResponseEntity(exception, BAD_REQUEST, VALIDATION_ERROR);
+  }
+
+  /**
+   * Catches and handles all exceptions for type {@link IntegrationException}.
+   *
+   * @param exception {@link IntegrationException} to process
+   * @return {@link ResponseEntity} with {@link ErrorResponse} body
+   */
+  @ExceptionHandler(IntegrationException.class)
+  public ResponseEntity<ErrorResponse> handleIntegrationException(Exception exception) {
+    logException(WARN, exception);
+    var errorParameters = singletonList(new Parameter().key("cause").value(exception.getCause().getMessage()));
+    var errorResponse = buildErrorResponse(exception, errorParameters, SERVICE_ERROR);
+    return buildResponseEntity(errorResponse, BAD_REQUEST);
   }
 
   /**
