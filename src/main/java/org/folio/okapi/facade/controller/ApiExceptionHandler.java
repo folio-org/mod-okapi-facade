@@ -14,7 +14,6 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import feign.FeignException;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +25,7 @@ import org.folio.common.domain.model.error.ErrorCode;
 import org.folio.common.domain.model.error.ErrorResponse;
 import org.folio.common.domain.model.error.Parameter;
 import org.folio.okapi.facade.integration.IntegrationException;
+import org.folio.spring.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -44,12 +44,12 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RequiredArgsConstructor
 public class ApiExceptionHandler {
   /**
-   * Catches and handles all exceptions for type {@link EntityNotFoundException}.
+   * Catches and handles all exceptions for type {@link NotFoundException} or {@link FeignException.NotFound}.
    *
-   * @param exception {@link EntityNotFoundException} object
+   * @param exception {@link NotFoundException} / {@link FeignException.NotFound} object
    * @return {@link ResponseEntity} with {@link ErrorResponse} body.
    */
-  @ExceptionHandler({EntityNotFoundException.class, FeignException.NotFound.class})
+  @ExceptionHandler({NotFoundException.class, FeignException.NotFound.class})
   public ResponseEntity<ErrorResponse> handleEntityNotFoundException(Exception exception) {
     logException(DEBUG, exception);
     return buildResponseEntity(exception, NOT_FOUND, NOT_FOUND_ERROR);

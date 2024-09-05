@@ -1,7 +1,7 @@
 package org.folio.okapi.facade.controller;
 
+import static org.folio.test.TestConstants.OKAPI_AUTH_TOKEN;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -12,7 +12,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import feign.Client;
 import java.util.List;
 import java.util.UUID;
 import org.folio.common.domain.model.ApplicationDescriptor;
@@ -26,9 +25,7 @@ import org.folio.okapi.facade.integration.mt.model.Tenant;
 import org.folio.okapi.facade.integration.mte.MgrTenantEntitlementsClient;
 import org.folio.okapi.facade.integration.mte.model.Entitlement;
 import org.folio.okapi.facade.service.TenantInterfacesService;
-import org.folio.spring.config.FolioSpringConfiguration;
-import org.folio.spring.scope.FolioExecutionScopeConfig;
-import org.folio.spring.service.TenantService;
+import org.folio.spring.FolioExecutionContext;
 import org.folio.test.types.UnitTest;
 import org.instancio.junit.Given;
 import org.instancio.junit.InstancioExtension;
@@ -37,27 +34,25 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 @UnitTest
 @WebMvcTest({ProxyTenantInterfaceController.class, TenantInterfacesService.class, ApiExceptionHandler.class})
-@Import({FolioExecutionScopeConfig.class, FolioSpringConfiguration.class})
 @ExtendWith(InstancioExtension.class)
 class ProxyTenantInterfaceControllerTest {
 
   @MockBean MgrApplicationsClient mgrApplicationsClient;
   @MockBean MgrTenantsClient mgrTenantsClient;
   @MockBean MgrTenantEntitlementsClient mgrTenantEntitlementsClient;
-  @MockBean TenantService tenantService;
-  @MockBean Client feignHttpClient;
+  @MockBean FolioExecutionContext folioContext;
 
   @Autowired private MockMvc mockMvc;
 
   @Test
   void getAllInterfaces_negative_nonExistingTenant() throws Exception {
     String tenantName = "mytenant";
-    when(mgrTenantsClient.queryTenantsByName(eq(tenantName), any())).thenReturn(ResultList.of(0, List.of()));
+    when(folioContext.getToken()).thenReturn(OKAPI_AUTH_TOKEN);
+    when(mgrTenantsClient.queryTenantsByName(tenantName, OKAPI_AUTH_TOKEN)).thenReturn(ResultList.of(0, List.of()));
     mockMvc.perform(get("/_/proxy/tenants/{tenantId}/interfaces", tenantName).header(ACCEPT, APPLICATION_JSON_VALUE))
       .andExpect(status().isNotFound());
   }
@@ -66,11 +61,15 @@ class ProxyTenantInterfaceControllerTest {
   void getAllInterfaces_positive_interfacesReturned() throws Exception {
     var tenantName = "mytenant";
     var tenantId = UUID.randomUUID();
-    when(mgrTenantsClient.queryTenantsByName(eq(tenantName), any())).thenReturn(
+    when(folioContext.getToken()).thenReturn(OKAPI_AUTH_TOKEN);
+    when(mgrTenantsClient.queryTenantsByName(tenantName, OKAPI_AUTH_TOKEN)).thenReturn(
       ResultList.of(1, List.of(Tenant.of(tenantId, tenantName, tenantName))));
-    when(mgrTenantEntitlementsClient.findByQuery(eq("tenantId==" + tenantId), anyInt(), anyInt(), any())).thenReturn(
-      ResultList.of(3, List.of(Entitlement.of("app1", tenantId.toString()), Entitlement.of("app2", tenantId.toString()),
-        Entitlement.of("app3", tenantId.toString()))));
+    when(mgrTenantEntitlementsClient.findByQuery(eq("tenantId==" + tenantId), anyInt(), anyInt(), eq(OKAPI_AUTH_TOKEN)))
+      .thenReturn(ResultList.of(3, List.of(
+        Entitlement.of("app1", tenantId.toString()),
+        Entitlement.of("app2", tenantId.toString()),
+        Entitlement.of("app3", tenantId.toString())
+      )));
     var result = new ModuleDescriptor();
     result.setProvides(List.of(new InterfaceDescriptor()));
     var routingEntry = new RoutingEntry();
@@ -81,7 +80,7 @@ class ProxyTenantInterfaceControllerTest {
     result.getProvides().get(0).setHandlers(List.of(routingEntry));
     result.getProvides().get(0).setInterfaceType("system");
     when(mgrApplicationsClient.queryApplicationDescriptors(eq("id==app1 OR id==app2 OR id==app3"), anyBoolean(),
-      anyInt(), anyInt(), any())).thenReturn(
+      anyInt(), anyInt(), eq(OKAPI_AUTH_TOKEN))).thenReturn(
       ResultList.of(1, List.of(new ApplicationDescriptor().moduleDescriptors(List.of(result)))));
     mockMvc.perform(
         get("/_/proxy/tenants/{tenantId}/interfaces?full=true", tenantName).header(ACCEPT, APPLICATION_JSON_VALUE))

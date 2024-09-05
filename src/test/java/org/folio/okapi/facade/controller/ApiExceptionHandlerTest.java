@@ -12,7 +12,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -21,6 +20,7 @@ import java.util.UUID;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.folio.okapi.facade.integration.IntegrationException;
+import org.folio.spring.exception.NotFoundException;
 import org.folio.test.types.UnitTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,12 +62,12 @@ class ApiExceptionHandlerTest {
 
   @Test
   void handleEntityNotFoundException_positive() throws Exception {
-    when(testService.getTestValue()).thenThrow(new EntityNotFoundException("Entity not found"));
+    when(testService.getTestValue()).thenThrow(new NotFoundException("Entity not found"));
     mockMvc.perform(get("/tests").queryParam("query", "cql.allRecords=1").contentType(APPLICATION_JSON))
       .andExpect(status().isNotFound())
       .andExpect(jsonPath("$.total_records", is(1)))
       .andExpect(jsonPath("$.errors[0].message", is("Entity not found")))
-      .andExpect(jsonPath("$.errors[0].type", is("EntityNotFoundException")))
+      .andExpect(jsonPath("$.errors[0].type", is("NotFoundException")))
       .andExpect(jsonPath("$.errors[0].code", is("not_found_error")));
   }
 

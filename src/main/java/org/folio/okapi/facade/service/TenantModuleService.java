@@ -20,12 +20,10 @@ import org.folio.okapi.facade.integration.mte.MgrTenantEntitlementsService;
 import org.folio.okapi.facade.utils.ModuleId;
 import org.folio.spring.FolioExecutionContext;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Log4j2
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class TenantModuleService {
 
   private final MgrTenantEntitlementsService entitlementService;

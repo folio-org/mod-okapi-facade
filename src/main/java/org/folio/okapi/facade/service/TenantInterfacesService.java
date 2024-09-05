@@ -6,7 +6,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.folio.common.utils.CollectionUtils.toStream;
 import static org.folio.okapi.facade.util.PaginationUtil.getWithPagination;
 
-import jakarta.persistence.EntityNotFoundException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +25,7 @@ import org.folio.okapi.facade.integration.mt.MgrTenantsClient;
 import org.folio.okapi.facade.integration.mt.model.Tenant;
 import org.folio.okapi.facade.integration.mte.MgrTenantEntitlementsClient;
 import org.folio.okapi.facade.integration.mte.model.Entitlement;
+import org.folio.spring.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -69,7 +69,7 @@ public class TenantInterfacesService {
   private UUID getTenantId(String tenantName, String token) {
     var tenants = mgrTenantsClient.queryTenantsByName(tenantName, token);
     if (tenants.getTotalRecords() < 1) {
-      throw new EntityNotFoundException("Tenant not found by name " + tenantName);
+      throw new NotFoundException("Tenant not found by name " + tenantName);
     }
     return tenants.getRecords().stream().map(Tenant::getId).findFirst().orElseThrow();
   }

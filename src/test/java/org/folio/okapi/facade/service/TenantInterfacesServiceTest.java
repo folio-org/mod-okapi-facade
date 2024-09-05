@@ -10,7 +10,6 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-import jakarta.persistence.EntityNotFoundException;
 import org.folio.common.domain.model.ApplicationDescriptor;
 import org.folio.common.domain.model.InterfaceDescriptor;
 import org.folio.common.domain.model.ModuleDescriptor;
@@ -21,6 +20,7 @@ import org.folio.okapi.facade.integration.mt.MgrTenantsClient;
 import org.folio.okapi.facade.integration.mt.model.Tenant;
 import org.folio.okapi.facade.integration.mte.MgrTenantEntitlementsClient;
 import org.folio.okapi.facade.integration.mte.model.Entitlement;
+import org.folio.spring.exception.NotFoundException;
 import org.folio.test.types.UnitTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -73,6 +73,6 @@ class TenantInterfacesServiceTest {
   void getTenantInterfaces_negative_tenantMissing() {
     when(mgrTenantsClient.queryTenantsByName(any(), any())).thenReturn(ResultList.of(0, of()));
     assertThatThrownBy(() -> unit.getTenantInterfaces("user token", "missing tenant", true, "system")).hasMessage(
-      "Tenant not found by name missing tenant").hasSameClassAs(new EntityNotFoundException());
+      "Tenant not found by name missing tenant").isInstanceOf(NotFoundException.class);
   }
 }
