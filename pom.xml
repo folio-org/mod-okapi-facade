@@ -91,10 +91,6 @@
           <groupId>org.postgresql</groupId>
           <artifactId>postgresql</artifactId>
         </exclusion>
-        <exclusion>
-          <groupId>org.liquibase</groupId>
-          <artifactId>liquibase-core</artifactId>
-        </exclusion>
       </exclusions>
     </dependency>
 
@@ -197,6 +193,11 @@
       <artifactId>mapstruct</artifactId>
       <version>${mapstruct.version}</version>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jdbc</artifactId>
     </dependency>
 
     <!-- Test dependencies -->
