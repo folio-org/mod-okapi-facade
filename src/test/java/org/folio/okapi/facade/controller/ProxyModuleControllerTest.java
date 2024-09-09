@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.stream.Stream;
-import org.folio.okapi.facade.domain.dto.ModuleDescriptor;
+import org.folio.common.domain.model.ModuleDescriptor;
 import org.folio.okapi.facade.support.DescriptorUtils.GivenModuleDescriptor;
 import org.folio.okapi.facade.support.ValueUtils.GivenInteger;
 import org.folio.test.types.UnitTest;

@@ -3,7 +3,7 @@ package org.folio.okapi.facade.support;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import lombok.experimental.UtilityClass;
-import org.folio.okapi.facade.domain.dto.EnvEntry;
+import org.folio.common.domain.model.EnvEntry;
 import org.folio.okapi.facade.support.EnvUtils.GivenEnvEntry.EnvEntryProvider;
 import org.instancio.Instancio;
 import org.instancio.junit.Given;

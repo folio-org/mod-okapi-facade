@@ -1,28 +1,14 @@
 spring:
   application:
     name: mod-okapi-facade
+  liquibase:
+    enabled: false
   cloud:
     openfeign:
       okhttp:
         enabled: true
-  datasource:
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:postgres}
-    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_DATABASE:postgres}
-  sql:
-    init:
-      # to boot up application despite any DB connection issues
-      continue-on-error: true
-  jpa:
-    open-in-view: false
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
-    show-sql: false
-  liquibase:
-    enabled: true
-    change-log: classpath:db/changelog/changelog-master.xml
+  cache:
+    type: caffeine
   jackson:
     default-property-inclusion: non_empty
     deserialization:
@@ -30,11 +16,23 @@ spring:
   mustache:
     check-template-location: false
 
+coffee-boots:
+  cache:
+    spec:
+      tenant-applications: maximumSize=109,expireAfterWrite=${TENANT_APPS_TTL:600s}
+
 server:
   port: 8081
   compression:
     enabled: true
     mime-types: text/html,text/plain,text/css,application/javascript,application/json
+
+feign:
+  compression:
+    request:
+      enabled: true
+    response:
+      enabled: true
 
 folio:
   tenant:
@@ -58,21 +56,20 @@ management:
       enabled: false
     readinessstate:
       enabled: true
-debug: false
 
 application:
   environment: ${ENV:folio}
   ma:
-    url: ${AM_URL}
-    querylimit: 500
+    url: ${AM_URL:}
+    query-limit: 500
     tls:
       enabled: ${AM_TLS_ENABLED:false}
       trust-store-path: ${AM_TLS_TRUSTSTORE_PATH:}
       trust-store-password: ${AM_TLS_TRUSTSTORE_PASSWORD:}
       trust-store-type: ${AM_TLS_TRUSTSTORE_TYPE:}
   mte:
-    url: ${TE_URL}
-    querylimit: 500
+    url: ${TE_URL:}
+    query-limit: 500
     tls:
       enabled: ${TE_TLS_ENABLED:false}
       trust-store-path: ${TE_TLS_TRUSTSTORE_PATH:}

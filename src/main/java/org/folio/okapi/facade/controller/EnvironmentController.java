@@ -1,7 +1,7 @@
 package org.folio.okapi.facade.controller;
 
 import java.util.List;
-import org.folio.okapi.facade.domain.dto.EnvEntry;
+import org.folio.common.domain.model.EnvEntry;
 import org.folio.okapi.facade.rest.resource.EnvironmentApi;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

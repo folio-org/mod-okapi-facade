@@ -37,7 +37,8 @@
     <hypersistence-utils-hibernate-63.version>3.8.2</hypersistence-utils-hibernate-63.version>
     <folio-spring-support.version>8.1.2</folio-spring-support.version>
     <folio-java-checkstyle.version>1.0.1</folio-java-checkstyle.version>
-    <applications-poc-tools.version>1.5.5</applications-poc-tools.version>
+    <applications-poc-tools.version>1.5.7-SNAPSHOT</applications-poc-tools.version>
+    <coffee-boots.version>4.0.0</coffee-boots.version>
 
     <okapi-facade.yaml-file>${project.basedir}/src/main/resources/swagger.api/okapi-facade.yaml
     </okapi-facade.yaml-file>
@@ -54,6 +55,7 @@
     <copy-rename-maven-plugin.version>1.0.1</copy-rename-maven-plugin.version>
     <maven-release-plugin.version>3.1.1</maven-release-plugin.version>
     <openapi-generator.version>7.8.0</openapi-generator.version>
+    <folio-module-descriptor-validator.version>0.0.1-SNAPSHOT</folio-module-descriptor-validator.version>
 
     <sonar.exclusions>
       <!--
@@ -68,7 +70,10 @@
       src/main/java/**/mapper/**/*,
       src/main/java/**/integration/**/model/**/*,
       src/main/java/**/*Application.java,
-      src/main/java/**/*Configuration.java
+      src/main/java/**/*Configuration.java,
+      <!-- the next two are copied from okapi source code -->
+      src/main/java/**/ModuleId.java,
+      src/main/java/**/SemVer.java
     </sonar.exclusions>
   </properties>
 
@@ -77,17 +82,33 @@
       <groupId>org.folio</groupId>
       <artifactId>folio-spring-base</artifactId>
       <version>${folio-spring-support.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.folio</groupId>
-      <artifactId>folio-spring-cql</artifactId>
-      <version>${folio-spring-support.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.postgresql</groupId>
+          <artifactId>postgresql</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
       <groupId>org.folio</groupId>
       <artifactId>folio-backend-common</artifactId>
+      <version>${applications-poc-tools.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.folio</groupId>
+      <artifactId>folio-tls-utils</artifactId>
       <version>${applications-poc-tools.version}</version>
     </dependency>
 
@@ -101,11 +122,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-log4j2</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-jpa</artifactId>
     </dependency>
 
     <dependency>
@@ -131,26 +147,26 @@
     </dependency>
 
     <dependency>
-      <groupId>org.liquibase</groupId>
-      <artifactId>liquibase-core</artifactId>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-cache</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-logging</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <scope>runtime</scope>
+      <groupId>io.github.stepio.coffee-boots</groupId>
+      <artifactId>coffee-boots</artifactId>
+      <version>${coffee-boots.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>io.hypersistence</groupId>
-      <artifactId>hypersistence-utils-hibernate-63</artifactId>
-      <version>${hypersistence-utils-hibernate-63.version}</version>
     </dependency>
 
     <dependency>
@@ -177,6 +193,11 @@
       <artifactId>mapstruct</artifactId>
       <version>${mapstruct.version}</version>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jdbc</artifactId>
     </dependency>
 
     <!-- Test dependencies -->
@@ -461,6 +482,26 @@
               <generateSupportingFiles>true</generateSupportingFiles>
               <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
               <generateModelDocumentation>true</generateModelDocumentation>
+              <importMappings>
+                Permission=org.folio.common.domain.model.Permission,
+                EnvEntry=org.folio.common.domain.model.EnvEntry,
+                RoutingEntry=org.folio.common.domain.model.RoutingEntry,
+                InterfaceDescriptor=org.folio.common.domain.model.InterfaceDescriptor,
+                LaunchDescriptor=org.folio.common.domain.model.LaunchDescriptor,
+                InterfaceReference=org.folio.common.domain.model.InterfaceReference,
+                UiModuleDescriptor=org.folio.common.domain.model.UiModuleDescriptor,
+                ModuleDescriptor=org.folio.common.domain.model.ModuleDescriptor
+              </importMappings>
+              <schemaMappings>
+                Permission=Permission,
+                EnvEntry=EnvEntry,
+                RoutingEntry=RoutingEntry,
+                InterfaceDescriptor=InterfaceDescriptor,
+                LaunchDescriptor=LaunchDescriptor,
+                InterfaceReference=InterfaceReference,
+                UiModuleDescriptor=UiModuleDescriptor,
+                ModuleDescriptor=ModuleDescriptor
+              </schemaMappings>
               <configOptions>
                 <java8>true</java8>
                 <dateLibrary>java</dateLibrary>
@@ -514,6 +555,22 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.folio</groupId>
+        <artifactId>folio-module-descriptor-validator</artifactId>
+        <version>${folio-module-descriptor-validator.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>validate</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <failOnInvalidDescriptor>false</failOnInvalidDescriptor>
+        </configuration>
       </plugin>
 
     </plugins>
@@ -582,7 +639,11 @@
           src/main/java/**/rest/resource/**/*,
           src/main/java/**/mapper/**/*,
           src/main/java/**/integration/**/model/**/*,
-          src/main/java/**/*Application.java
+          src/main/java/**/*Application.java,
+          src/main/java/**/*Configuration.java,
+          <!-- the next two are copied from okapi source code -->
+          src/main/java/**/ModuleId.java,
+          src/main/java/**/SemVer.java
         </sonar.exclusions>
         <sonar.coverage.jacoco.xmlReportPaths>
           target/site/jacoco-aggregate/jacoco.xml

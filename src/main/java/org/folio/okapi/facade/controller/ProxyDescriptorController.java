@@ -1,7 +1,7 @@
 package org.folio.okapi.facade.controller;
 
 import java.util.List;
-import org.folio.okapi.facade.domain.dto.ModuleDescriptor;
+import org.folio.common.domain.model.ModuleDescriptor;
 import org.folio.okapi.facade.domain.dto.PullDescriptor;
 import org.folio.okapi.facade.rest.resource.ProxyDescriptorApi;
 import org.springframework.http.HttpStatus;

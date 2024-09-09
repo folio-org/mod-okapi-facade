@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.folio.okapi.facade.domain.dto.RoutingEntry;
+import org.folio.common.domain.model.RoutingEntry;
 import org.folio.okapi.facade.domain.dto.TimerDescriptor;
 import org.folio.okapi.facade.support.DescriptorUtils.GivenRoutingEntry;
 import org.folio.okapi.facade.support.DescriptorUtils.GivenTimerDescriptor;

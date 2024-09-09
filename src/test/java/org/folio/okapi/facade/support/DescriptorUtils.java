@@ -1,16 +1,18 @@
 package org.folio.okapi.facade.support;
 
+import static org.instancio.Instancio.gen;
 import static org.instancio.Select.field;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.List;
 import lombok.experimental.UtilityClass;
+import org.folio.common.domain.model.LaunchDescriptor;
+import org.folio.common.domain.model.ModuleDescriptor;
+import org.folio.common.domain.model.RoutingEntry;
 import org.folio.okapi.facade.domain.dto.DeploymentDescriptor;
-import org.folio.okapi.facade.domain.dto.LaunchDescriptor;
-import org.folio.okapi.facade.domain.dto.ModuleDescriptor;
 import org.folio.okapi.facade.domain.dto.NodeDescriptor;
 import org.folio.okapi.facade.domain.dto.PullDescriptor;
-import org.folio.okapi.facade.domain.dto.RoutingEntry;
 import org.folio.okapi.facade.domain.dto.TenantDescriptor;
 import org.folio.okapi.facade.domain.dto.TenantModuleDescriptor;
 import org.folio.okapi.facade.domain.dto.TimerDescriptor;
@@ -44,6 +46,7 @@ public class DescriptorUtils {
     Instancio.of(ModuleDescriptor.class)
       .setModel(field(ModuleDescriptor::getLaunchDescriptor), LAUNCH_DESCRIPTOR_MODEL)
       .ignore(field(ModuleDescriptor::getMetadata))
+      .ignore(field(ModuleDescriptor::getExtensions))
       .toModel();
 
   private static final Model<TenantDescriptor> TENANT_DESCRIPTOR_MODEL =
@@ -74,6 +77,16 @@ public class DescriptorUtils {
 
   public static ModuleDescriptor moduleDescriptor() {
     return Instancio.of(MODULE_DESCRIPTOR_MODEL).create();
+  }
+
+  public static List<ModuleDescriptor> moduleDescriptors(int maxSize) {
+    return moduleDescriptors(1, maxSize);
+  }
+
+  public static List<ModuleDescriptor> moduleDescriptors(int minSize, int maxSize) {
+    return Instancio.ofList(MODULE_DESCRIPTOR_MODEL)
+      .size(gen().ints().range(minSize, maxSize).get())
+      .create();
   }
 
   public static TenantDescriptor tenantDescriptor() {
