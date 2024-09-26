@@ -5,10 +5,14 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import org.folio.common.domain.model.ApplicationDescriptor;
 import org.folio.common.domain.model.ResultList;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
+@FeignClient(name = "application",
+  url = "${application.mt.url}",
+  configuration = MgrApplicationsClientProperties.class)
 public interface MgrApplicationsClient {
 
   @GetMapping(value = "/applications", consumes = APPLICATION_JSON_VALUE)

@@ -76,7 +76,7 @@ application:
       trust-store-password: ${TE_TLS_TRUSTSTORE_PASSWORD:}
       trust-store-type: ${TE_TLS_TRUSTSTORE_TYPE:}
   mt:
-    url: ${TM_URL}
+    url: ${TM_URL:}
     tls:
       enabled: ${TM_TLS_ENABLED:false}
       trust-store-path: ${TM_TLS_TRUSTSTORE_PATH:}
