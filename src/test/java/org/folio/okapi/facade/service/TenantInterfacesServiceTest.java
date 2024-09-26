@@ -75,4 +75,11 @@ class TenantInterfacesServiceTest {
     assertThatThrownBy(() -> unit.getTenantInterfaces("user token", "missing tenant", true, "system")).hasMessage(
       "Tenant not found by name missing tenant").isInstanceOf(NotFoundException.class);
   }
+
+  @Test
+  void getTenantInterfaces_negative_exceptionThrown() {
+    when(mgrTenantsClient.queryTenantsByName(any(), any())).thenThrow(new RuntimeException("Unexpected error"));
+    assertThatThrownBy(() -> unit.getTenantInterfaces("user token", "missing tenant", true, "system")).hasMessage(
+      "Unexpected error").isInstanceOf(RuntimeException.class);
+  }
 }

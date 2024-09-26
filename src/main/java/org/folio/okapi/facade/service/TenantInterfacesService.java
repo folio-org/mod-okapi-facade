@@ -16,6 +16,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.folio.common.domain.model.ApplicationDescriptor;
 import org.folio.common.domain.model.InterfaceDescriptor;
 import org.folio.common.domain.model.ModuleDescriptor;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
+@Log4j2
 public class TenantInterfacesService {
 
   private final MgrApplicationsClient mgrApplicationsClient;
@@ -42,22 +44,25 @@ public class TenantInterfacesService {
 
   public List<InterfaceDescriptor> getTenantInterfaces(String token, String tenantName, boolean full,
     String interfaceType) {
-    var tenantId = getTenantId(tenantName, token);
+    try {
+      var tenantId = getTenantId(tenantName, token);
 
-    var entitlements = getAllEntitlements(tenantId, token);
-    if (entitlements.isEmpty()) {
-      return Collections.emptyList();
+      var entitlements = getAllEntitlements(tenantId, token);
+      if (entitlements.isEmpty()) {
+        return Collections.emptyList();
+      }
+
+      var appDescriptors = getAppDescriptors(entitlements, token);
+
+      var moduleDescriptors = extract(toStream(appDescriptors), ApplicationDescriptor::getModuleDescriptors);
+      var providedInterfaces = extract(moduleDescriptors, ModuleDescriptor::getProvides);
+
+      return providedInterfaces.filter(Objects::nonNull).filter(getFilter(interfaceType))
+        .map(desc -> full ? desc : new InterfaceDescriptor(desc.getId(), desc.getVersion())).toList();
+    } catch (Exception e) {
+      log.error("Failed to retrieve tenant interfaces information", e);
+      throw e;
     }
-
-    var appDescriptors = getAppDescriptors(entitlements, token);
-
-    var moduleDescriptors = extract(toStream(appDescriptors), ApplicationDescriptor::getModuleDescriptors);
-    var providedInterfaces = extract(moduleDescriptors, ModuleDescriptor::getProvides);
-
-    return providedInterfaces.filter(Objects::nonNull)
-      .filter(getFilter(interfaceType))
-      .map(desc -> full ? desc : new InterfaceDescriptor(desc.getId(), desc.getVersion()))
-      .toList();
   }
 
   private static <S, T> Stream<T> extract(Stream<S> stream, Function<S, List<T>> mapper) {
