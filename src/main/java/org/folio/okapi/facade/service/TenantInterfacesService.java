@@ -57,11 +57,9 @@ public class TenantInterfacesService {
       var moduleDescriptors = extract(toStream(appDescriptors), ApplicationDescriptor::getModuleDescriptors);
       var providedInterfaces = extract(moduleDescriptors, ModuleDescriptor::getProvides);
 
-      return providedInterfaces.filter(Objects::nonNull)
-        .filter(getFilter(interfaceType))
-        .map(desc -> full ? desc : new InterfaceDescriptor(desc.getId(), desc.getVersion()))
-        .toList();
-    } catch(Exception e) {
+      return providedInterfaces.filter(Objects::nonNull).filter(getFilter(interfaceType))
+        .map(desc -> full ? desc : new InterfaceDescriptor(desc.getId(), desc.getVersion())).toList();
+    } catch (Exception e) {
       log.error("Failed to retrieve tenant interfaces information", e);
       throw e;
     }
