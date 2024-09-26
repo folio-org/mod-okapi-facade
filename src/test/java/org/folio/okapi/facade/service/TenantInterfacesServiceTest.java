@@ -10,6 +10,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
+import feign.FeignException;
 import org.folio.common.domain.model.ApplicationDescriptor;
 import org.folio.common.domain.model.InterfaceDescriptor;
 import org.folio.common.domain.model.ModuleDescriptor;
@@ -74,5 +75,12 @@ class TenantInterfacesServiceTest {
     when(mgrTenantsClient.queryTenantsByName(any(), any())).thenReturn(ResultList.of(0, of()));
     assertThatThrownBy(() -> unit.getTenantInterfaces("user token", "missing tenant", true, "system")).hasMessage(
       "Tenant not found by name missing tenant").isInstanceOf(NotFoundException.class);
+  }
+
+  @Test
+  void getTenantInterfaces_negative_exceptionThrown() {
+    when(mgrTenantsClient.queryTenantsByName(any(), any())).thenThrow(new RuntimeException("Unexpected error"));
+    assertThatThrownBy(() -> unit.getTenantInterfaces("user token", "missing tenant", true, "system")).hasMessage(
+      "Unexpected error").isInstanceOf(RuntimeException.class);
   }
 }
