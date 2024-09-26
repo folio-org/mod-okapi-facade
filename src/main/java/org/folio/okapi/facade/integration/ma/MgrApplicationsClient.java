@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = "application",
-  url = "${application.mt.url}",
-  configuration = MgrApplicationsClientProperties.class)
+  url = "${application.ma.url}",
+  configuration = MgrApplicationsClientConfiguration.class)
 public interface MgrApplicationsClient {
 
   @GetMapping(value = "/applications", consumes = APPLICATION_JSON_VALUE)
