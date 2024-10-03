@@ -20,14 +20,12 @@
     {
       "id": "okapi",
       "version": "1.9",
-      "interfaceType": "internal",
       "handlers": [
         {
           "methods": [
             "POST"
           ],
           "pathPattern": "/_/deployment/modules",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.deployment.post"
           ]
@@ -37,7 +35,6 @@
             "GET"
           ],
           "pathPattern": "/_/deployment/modules",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.deployment.get"
           ]
@@ -47,7 +44,6 @@
             "GET"
           ],
           "pathPattern": "/_/deployment/modules/{instanceId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.deployment.get"
           ]
@@ -57,7 +53,6 @@
             "DELETE"
           ],
           "pathPattern": "/_/deployment/modules/{instanceId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.deployment.delete"
           ]
@@ -67,7 +62,6 @@
             "POST"
           ],
           "pathPattern": "/_/discovery/modules",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.discovery.post"
           ]
@@ -77,7 +71,6 @@
             "GET"
           ],
           "pathPattern": "/_/discovery/modules",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.discovery.get"
           ]
@@ -87,7 +80,6 @@
             "GET"
           ],
           "pathPattern": "/_/discovery/modules/{serviceId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.discovery.get"
           ]
@@ -97,7 +89,6 @@
             "GET"
           ],
           "pathPattern": "/_/discovery/modules/{serviceId}/{instanceId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.discovery.get"
           ]
@@ -107,7 +98,6 @@
             "PUT"
           ],
           "pathPattern": "/_/discovery/modules/{serviceId}/{instanceId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.discovery.put"
           ]
@@ -117,7 +107,6 @@
             "DELETE"
           ],
           "pathPattern": "/_/discovery/modules",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.discovery.delete"
           ]
@@ -127,7 +116,6 @@
             "DELETE"
           ],
           "pathPattern": "/_/discovery/modules/{serviceId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.discovery.delete"
           ]
@@ -137,7 +125,6 @@
             "DELETE"
           ],
           "pathPattern": "/_/discovery/modules/{serviceId}/{instanceId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.discovery.delete"
           ]
@@ -147,7 +134,6 @@
             "GET"
           ],
           "pathPattern": "/_/discovery/health",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.discovery.health.get"
           ]
@@ -157,7 +143,6 @@
             "GET"
           ],
           "pathPattern": "/_/discovery/health/{serviceId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.discovery.health.get"
           ]
@@ -167,7 +152,6 @@
             "GET"
           ],
           "pathPattern": "/_/discovery/health/{serviceId}/{instanceId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.discovery.health.get"
           ]
@@ -177,7 +161,6 @@
             "GET"
           ],
           "pathPattern": "/_/discovery/nodes",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.discovery.nodes.get"
           ]
@@ -187,7 +170,6 @@
             "PUT"
           ],
           "pathPattern": "/_/discovery/nodes/{nodeId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.discovery.nodes.put"
           ]
@@ -197,7 +179,6 @@
             "GET"
           ],
           "pathPattern": "/_/discovery/nodes/{nodeId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.discovery.nodes.get"
           ]
@@ -207,7 +188,6 @@
             "POST"
           ],
           "pathPattern": "/_/proxy/import/modules",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.modules.post"
           ]
@@ -217,7 +197,6 @@
             "POST"
           ],
           "pathPattern": "/_/proxy/cleanup/modules",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.cleanup.modules"
           ]
@@ -227,7 +206,6 @@
             "POST"
           ],
           "pathPattern": "/_/proxy/modules",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.modules.post"
           ]
@@ -237,7 +215,6 @@
             "GET"
           ],
           "pathPattern": "/_/proxy/modules",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.modules.list"
           ]
@@ -247,7 +224,6 @@
             "GET"
           ],
           "pathPattern": "/_/proxy/modules/{moduleId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.modules.get"
           ]
@@ -257,7 +233,6 @@
             "DELETE"
           ],
           "pathPattern": "/_/proxy/modules/{moduleId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.modules.delete"
           ]
@@ -267,7 +242,6 @@
             "POST"
           ],
           "pathPattern": "/_/proxy/tenants",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.tenants.post"
           ]
@@ -277,7 +251,6 @@
             "GET"
           ],
           "pathPattern": "/_/proxy/tenants",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.tenants.list"
           ]
@@ -287,7 +260,6 @@
             "GET"
           ],
           "pathPattern": "/_/proxy/tenants/{tenantId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.tenants.get"
           ]
@@ -297,7 +269,6 @@
             "PUT"
           ],
           "pathPattern": "/_/proxy/tenants/{tenantId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.tenants.put"
           ]
@@ -307,7 +278,6 @@
             "DELETE"
           ],
           "pathPattern": "/_/proxy/tenants/{tenantId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.tenants.delete"
           ]
@@ -317,7 +287,6 @@
             "POST"
           ],
           "pathPattern": "/_/proxy/tenants/{tenantId}/upgrade",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.tenants.upgrade.post"
           ]
@@ -327,7 +296,6 @@
             "GET"
           ],
           "pathPattern": "/_/proxy/tenants/{tenantId}/install",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.tenants.install.list"
           ]
@@ -337,7 +305,6 @@
             "POST"
           ],
           "pathPattern": "/_/proxy/tenants/{tenantId}/install",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.tenants.install.post"
           ]
@@ -347,7 +314,6 @@
             "DELETE"
           ],
           "pathPattern": "/_/proxy/tenants/{tenantId}/install",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.tenants.install.delete"
           ]
@@ -357,7 +323,6 @@
             "GET"
           ],
           "pathPattern": "/_/proxy/tenants/{tenantId}/install/{installId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.tenants.install.get"
           ]
@@ -367,7 +332,6 @@
             "DELETE"
           ],
           "pathPattern": "/_/proxy/tenants/{tenantId}/install/{installId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.tenants.install.delete"
           ]
@@ -377,7 +341,6 @@
             "POST"
           ],
           "pathPattern": "/_/proxy/tenants/{tenantId}/modules",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.tenants.modules.post"
           ]
@@ -387,7 +350,6 @@
             "GET"
           ],
           "pathPattern": "/_/proxy/tenants/{tenantId}/modules",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.tenants.modules.list"
           ],
@@ -398,7 +360,6 @@
             "DELETE"
           ],
           "pathPattern": "/_/proxy/tenants/{tenantId}/modules",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.tenants.modules.delete"
           ]
@@ -408,7 +369,6 @@
             "POST"
           ],
           "pathPattern": "/_/proxy/tenants/{tenantId}/modules/{moduleId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.tenants.modules.enabled.post"
           ]
@@ -418,7 +378,6 @@
             "GET"
           ],
           "pathPattern": "/_/proxy/tenants/{tenantId}/modules/{moduleId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.tenants.modules.enabled.get"
           ],
@@ -429,7 +388,6 @@
             "DELETE"
           ],
           "pathPattern": "/_/proxy/tenants/{tenantId}/modules/{moduleId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.tenants.modules.enabled.delete"
           ]
@@ -439,7 +397,6 @@
             "GET"
           ],
           "pathPattern": "/_/proxy/tenants/{tenantId}/interfaces",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.tenants.interfaces.list"
           ],
@@ -450,7 +407,6 @@
             "GET"
           ],
           "pathPattern": "/_/proxy/tenants/{tenantId}/interfaces/{interfaceId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.tenants.interfaces.get"
           ],
@@ -461,7 +417,6 @@
             "GET"
           ],
           "pathPattern": "/_/proxy/tenants/{tenantId}/timers",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.tenants.timers.list"
           ],
@@ -472,7 +427,6 @@
             "PATCH"
           ],
           "pathPattern": "/_/proxy/tenants/{tenantId}/timers",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.tenants.timers.patch"
           ],
@@ -485,7 +439,6 @@
             "GET"
           ],
           "pathPattern": "/_/proxy/tenants/{tenantId}/timers/{timerId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.tenants.timers.get"
           ],
@@ -496,7 +449,6 @@
             "PATCH"
           ],
           "pathPattern": "/_/proxy/tenants/{tenantId}/timers/{timerId}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.tenants.timers.patch"
           ],
@@ -509,7 +461,6 @@
             "GET"
           ],
           "pathPattern": "/_/proxy/health",
-          "type": "internal",
           "permissionsRequired": []
         },
         {
@@ -517,7 +468,6 @@
             "POST"
           ],
           "pathPattern": "/_/proxy/pull/modules",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.proxy.pull.modules.post"
           ]
@@ -527,7 +477,6 @@
             "POST"
           ],
           "pathPattern": "/_/env",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.env.post"
           ]
@@ -537,7 +486,6 @@
             "GET"
           ],
           "pathPattern": "/_/env",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.env.list"
           ]
@@ -547,7 +495,6 @@
             "GET"
           ],
           "pathPattern": "/_/env/{id}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.env.get"
           ]
@@ -557,7 +504,6 @@
             "DELETE"
           ],
           "pathPattern": "/_/env/{id}",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.env.delete"
           ]
@@ -567,7 +513,6 @@
             "GET"
           ],
           "pathPattern": "/_/version",
-          "type": "internal",
           "permissionsRequired": [
             "okapi.version.get"
           ],
