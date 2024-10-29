@@ -39,23 +39,10 @@ folio:
     validation:
       enabled: false
 management:
-  endpoints:
-    web:
-      exposure:
-        include: info,health,env,liquibase,threaddump,heapdump,httptrace,loggers
-      base-path: /admin
-  #  endpoint:
-  #    health:
-  #      show-details: always
-  #      show-components: always
-  ###################################################
-  # Disable all checks except for readiness
-  ###################################################
-  health:
-    defaults:
-      enabled: false
-    readinessstate:
-      enabled: true
+  endpoints.web:
+    base-path: /admin
+    exposure:
+      include: info,health,liquibase,threaddump,heapdump,httptrace,loggers
 
 application:
   environment: ${ENV:folio}
