@@ -1,3 +1,6 @@
+## Version `v2.0.0` (01.11.2024)
+### Changes:
+* Bump application-poc-tools to 2.0.0
 ---
 ## Version `v1.0.0` (04.10.2024)
 ### Changes:
