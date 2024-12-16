@@ -1,3 +1,7 @@
+## Version `v2.0.1` (16.12.2024)
+### Changes:
+* Add support for TLS/FIPS mode (MODOKAPFAC-8)
+---
 ## Version `v2.0.0` (01.11.2024)
 ### Changes:
 * Bump application-poc-tools to 2.0.0
