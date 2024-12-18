@@ -1,3 +1,8 @@
+## Version `v2.0.2` (28.12.2024)
+### Changes:
+* Bump dependencies Spring Boot 3.3.5, folio-spring-base 8.2.1 fixing vulns (MODOKAPFAC-13)
+* Add system token to the all mgr-components calls (MODOKAPFAC-11)
+---
 ## Version `v2.0.1` (16.12.2024)
 ### Changes:
 * Add support for TLS/FIPS mode (MODOKAPFAC-8)
