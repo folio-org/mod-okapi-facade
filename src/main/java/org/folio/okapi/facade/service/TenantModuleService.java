@@ -151,6 +151,8 @@ public class TenantModuleService {
   }
 
   private static String extractToken(FolioExecutionContext folioContext) {
-    return folioContext.getAllHeaders().get("x-system-token").stream().findFirst().orElse(folioContext.getToken());
+    return toStream(folioContext.getAllHeaders().get("x-system-token"))
+      .findFirst()
+      .orElse(folioContext.getToken());
   }
 }
