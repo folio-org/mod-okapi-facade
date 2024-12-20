@@ -10,9 +10,9 @@ import static org.folio.test.TestConstants.OKAPI_AUTH_TOKEN;
 import static org.folio.test.TestConstants.TENANT_ID;
 import static org.folio.test.TestUtils.parse;
 import static org.folio.test.TestUtils.readString;
+import static org.folio.test.TestUtils.verifyNoMoreInteractions;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -31,6 +31,7 @@ import org.folio.okapi.facade.integration.mte.MgrTenantEntitlementsService;
 import org.folio.okapi.facade.utils.ModuleId;
 import org.folio.spring.FolioExecutionContext;
 import org.folio.test.types.UnitTest;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -73,8 +74,9 @@ class TenantModuleServiceTest {
     when(folioContext.getAllHeaders()).thenReturn(Map.of());
   }
 
+  @AfterEach
   void tearDown() {
-    verifyNoMoreInteractions(entitlementService, folioContext);
+    verifyNoMoreInteractions(this);
   }
 
   @Test
@@ -83,6 +85,7 @@ class TenantModuleServiceTest {
 
     var expected = extractAllModuleDescriptors(testAppDescriptors, byModuleId());
     assertThat(found).containsExactlyElementsOf(expected);
+    verify(entitlementService).getTenantApplications(tenantId, OKAPI_AUTH_TOKEN);
   }
 
   @Test
@@ -104,6 +107,7 @@ class TenantModuleServiceTest {
 
     var expected = extractAllModuleDescriptors(testAppDescriptors, byModuleId());
     assertThat(found).containsExactlyElementsOf(expected);
+    verify(entitlementService).getTenantApplications(tenantId, OKAPI_AUTH_TOKEN);
   }
 
   @Test
@@ -113,6 +117,7 @@ class TenantModuleServiceTest {
 
     var expected = extractAllModuleDescriptors(testAppDescriptors, moduleNameIn(filter), byModuleId());
     assertThat(found).containsExactlyElementsOf(expected);
+    verify(entitlementService).getTenantApplications(tenantId, OKAPI_AUTH_TOKEN);
   }
 
   @Test
@@ -123,6 +128,7 @@ class TenantModuleServiceTest {
     var expected = extractAllModuleDescriptors(testAppDescriptors, moduleNameIn("mod-configuration", "mod-users"),
       byModuleId());
     assertThat(found).containsExactlyElementsOf(expected);
+    verify(entitlementService).getTenantApplications(tenantId, OKAPI_AUTH_TOKEN);
   }
 
   @Test
@@ -135,6 +141,7 @@ class TenantModuleServiceTest {
         "mod-password-validator", "mod-users-bl", "mod-users-keycloak"),
       byModuleId());
     assertThat(found).containsExactlyElementsOf(expected);
+    verify(entitlementService).getTenantApplications(tenantId, OKAPI_AUTH_TOKEN);
   }
 
   @Test
@@ -146,6 +153,7 @@ class TenantModuleServiceTest {
       moduleNameIn("mod-users-bl", "folio_stripes-core"),
       byModuleId());
     assertThat(found).containsExactlyElementsOf(expected);
+    verify(entitlementService).getTenantApplications(tenantId, OKAPI_AUTH_TOKEN);
   }
 
   @Test
@@ -157,6 +165,7 @@ class TenantModuleServiceTest {
       moduleNameIn("folio_authorization-policies"),
       byModuleId());
     assertThat(found).containsExactlyElementsOf(expected);
+    verify(entitlementService).getTenantApplications(tenantId, OKAPI_AUTH_TOKEN);
   }
 
   @Test
@@ -169,6 +178,7 @@ class TenantModuleServiceTest {
       moduleNameIn(filter),
       byModuleId());
     assertThat(found).containsExactlyElementsOf(expected);
+    verify(entitlementService).getTenantApplications(tenantId, OKAPI_AUTH_TOKEN);
   }
 
   @Test
@@ -179,6 +189,7 @@ class TenantModuleServiceTest {
 
     var expected = extractAllModuleDescriptors(testAppDescriptors, byModuleId().reversed());
     assertThat(found).containsExactlyElementsOf(expected);
+    verify(entitlementService).getTenantApplications(tenantId, OKAPI_AUTH_TOKEN);
   }
 
   @Test
@@ -189,6 +200,7 @@ class TenantModuleServiceTest {
 
     var expected = extractAllModuleDescriptors(testAppDescriptors, byModuleId());
     assertThat(found).containsExactlyElementsOf(expected);
+    verify(entitlementService).getTenantApplications(tenantId, OKAPI_AUTH_TOKEN);
   }
 
   @Test
@@ -198,6 +210,7 @@ class TenantModuleServiceTest {
     assertThatThrownBy(this::findAll)
       .isInstanceOf(IllegalArgumentException.class)
       .hasMessage("unknown orderBy field: " + orderBy);
+    verify(entitlementService).getTenantApplications(tenantId, OKAPI_AUTH_TOKEN);
   }
 
   @Test
@@ -208,6 +221,7 @@ class TenantModuleServiceTest {
     assertThatThrownBy(this::findAll)
       .isInstanceOf(IllegalArgumentException.class)
       .hasMessage("invalid order value: " + order);
+    verify(entitlementService).getTenantApplications(tenantId, OKAPI_AUTH_TOKEN);
   }
 
   private List<ModuleDescriptor> findAll() {
