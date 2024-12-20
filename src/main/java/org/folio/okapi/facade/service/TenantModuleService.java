@@ -6,6 +6,7 @@ import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.folio.common.utils.CollectionUtils.mapItems;
 import static org.folio.common.utils.CollectionUtils.toStream;
+import static org.folio.okapi.facade.utils.TokenUtils.extractToken;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -148,11 +149,5 @@ public class TenantModuleService {
       }
       throw new IllegalArgumentException("invalid order value: " + value);
     }
-  }
-
-  private static String extractToken(FolioExecutionContext folioContext) {
-    return toStream(folioContext.getAllHeaders().get("x-system-token"))
-      .findFirst()
-      .orElse(folioContext.getToken());
   }
 }

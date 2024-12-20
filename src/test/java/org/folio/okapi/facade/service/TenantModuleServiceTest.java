@@ -6,6 +6,7 @@ import static org.apache.commons.collections4.ListUtils.union;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.folio.common.utils.CollectionUtils.toStream;
+import static org.folio.okapi.facade.utils.TokenUtils.SYSTEM_TOKEN;
 import static org.folio.test.TestConstants.OKAPI_AUTH_TOKEN;
 import static org.folio.test.TestConstants.TENANT_ID;
 import static org.folio.test.TestUtils.parse;
@@ -90,7 +91,7 @@ class TenantModuleServiceTest {
 
   @Test
   void findAll_positive_defaultParams_systemTokenExists() {
-    when(folioContext.getAllHeaders()).thenReturn(Map.of("x-system-token", List.of("systemToken")));
+    when(folioContext.getAllHeaders()).thenReturn(Map.of(SYSTEM_TOKEN, List.of("systemToken")));
     when(entitlementService.getTenantApplications(tenantId, "systemToken")).thenReturn(testAppDescriptors);
     var found = findAll();
 
