@@ -12,6 +12,7 @@ import static org.folio.test.TestUtils.parse;
 import static org.folio.test.TestUtils.readString;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -29,9 +30,7 @@ import org.folio.common.domain.model.ModuleDescriptor;
 import org.folio.okapi.facade.integration.mte.MgrTenantEntitlementsService;
 import org.folio.okapi.facade.utils.ModuleId;
 import org.folio.spring.FolioExecutionContext;
-import org.folio.test.TestUtils;
 import org.folio.test.types.UnitTest;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -71,11 +70,11 @@ class TenantModuleServiceTest {
   void setUp() {
     when(folioContext.getToken()).thenReturn(OKAPI_AUTH_TOKEN);
     lenient().when(entitlementService.getTenantApplications(tenantId, OKAPI_AUTH_TOKEN)).thenReturn(testAppDescriptors);
+    when(folioContext.getAllHeaders()).thenReturn(Map.of());
   }
 
-  @AfterEach
   void tearDown() {
-    TestUtils.verifyNoMoreInteractions(this);
+    verifyNoMoreInteractions(entitlementService, folioContext);
   }
 
   @Test
