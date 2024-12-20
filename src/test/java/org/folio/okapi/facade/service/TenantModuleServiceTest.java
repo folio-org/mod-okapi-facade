@@ -10,12 +10,15 @@ import static org.folio.test.TestConstants.OKAPI_AUTH_TOKEN;
 import static org.folio.test.TestConstants.TENANT_ID;
 import static org.folio.test.TestUtils.parse;
 import static org.folio.test.TestUtils.readString;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -67,7 +70,7 @@ class TenantModuleServiceTest {
   @BeforeEach
   void setUp() {
     when(folioContext.getToken()).thenReturn(OKAPI_AUTH_TOKEN);
-    when(entitlementService.getTenantApplications(tenantId, OKAPI_AUTH_TOKEN)).thenReturn(testAppDescriptors);
+    lenient().when(entitlementService.getTenantApplications(tenantId, OKAPI_AUTH_TOKEN)).thenReturn(testAppDescriptors);
   }
 
   @AfterEach
@@ -81,6 +84,18 @@ class TenantModuleServiceTest {
 
     var expected = extractAllModuleDescriptors(testAppDescriptors, byModuleId());
     assertThat(found).containsExactlyElementsOf(expected);
+  }
+
+  @Test
+  void findAll_positive_defaultParams_systemTokenExists() {
+    when(folioContext.getAllHeaders()).thenReturn(Map.of("x-system-token", List.of("systemToken")));
+    when(entitlementService.getTenantApplications(tenantId, "systemToken")).thenReturn(testAppDescriptors);
+    var found = findAll();
+
+    var expected = extractAllModuleDescriptors(testAppDescriptors, byModuleId());
+
+    assertThat(found).containsExactlyElementsOf(expected);
+    verify(entitlementService).getTenantApplications(tenantId, "systemToken");
   }
 
   @Test
