@@ -32,7 +32,7 @@ public class TenantModuleService {
   @SuppressWarnings("java:S107")
   public List<ModuleDescriptor> findAll(String tenantId, String filter, boolean full, Integer latest,
     String order, String orderBy, String provide, String require, String scope, String preRelease, String npmSnapshot) {
-    var token = folioContext.getToken(); // the token is not required by the target endpoint for now
+    var token = extractToken(folioContext);
     var apps = entitlementService.getTenantApplications(tenantId, token);
 
     var mdFilter = createFilter(filter, provide, require, scope, preRelease, npmSnapshot);
@@ -148,5 +148,9 @@ public class TenantModuleService {
       }
       throw new IllegalArgumentException("invalid order value: " + value);
     }
+  }
+
+  private static String extractToken(FolioExecutionContext folioContext) {
+    return folioContext.getAllHeaders().get("x-system-token").stream().findFirst().orElse(folioContext.getToken());
   }
 }
