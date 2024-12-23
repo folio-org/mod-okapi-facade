@@ -1,5 +1,7 @@
 package org.folio.okapi.facade.controller;
 
+import static org.folio.okapi.facade.utils.TokenUtils.extractToken;
+
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.folio.common.domain.model.InterfaceDescriptor;
@@ -21,7 +23,7 @@ public class ProxyTenantInterfaceController implements ProxyTenantInterfaceApi {
   @Override
   public ResponseEntity<List<InterfaceDescriptor>> getAllInterfaces(String tenantId, Boolean full, String type) {
     return ResponseEntity.ofNullable(
-      tenantInterfacesService.getTenantInterfaces(folioExecutionContext.getToken(), tenantId, full != null && full,
+      tenantInterfacesService.getTenantInterfaces(extractToken(folioExecutionContext), tenantId, full != null && full,
         type));
   }
 

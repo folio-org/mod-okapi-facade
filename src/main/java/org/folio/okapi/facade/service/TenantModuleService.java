@@ -6,6 +6,7 @@ import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.folio.common.utils.CollectionUtils.mapItems;
 import static org.folio.common.utils.CollectionUtils.toStream;
+import static org.folio.okapi.facade.utils.TokenUtils.extractToken;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -32,7 +33,7 @@ public class TenantModuleService {
   @SuppressWarnings("java:S107")
   public List<ModuleDescriptor> findAll(String tenantId, String filter, boolean full, Integer latest,
     String order, String orderBy, String provide, String require, String scope, String preRelease, String npmSnapshot) {
-    var token = folioContext.getToken(); // the token is not required by the target endpoint for now
+    var token = extractToken(folioContext);
     var apps = entitlementService.getTenantApplications(tenantId, token);
 
     var mdFilter = createFilter(filter, provide, require, scope, preRelease, npmSnapshot);
