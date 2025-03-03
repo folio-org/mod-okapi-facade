@@ -1,4 +1,4 @@
-## Version `v2.0.3` (28.12.2024)
+## Version `v2.0.3` (03.03.2025)
 ### Changes:
 * Fix access token extraction (MODOKAPFAC-11)
 
