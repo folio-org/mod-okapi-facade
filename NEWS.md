@@ -1,3 +1,7 @@
+## Version `v2.0.3` (28.12.2024)
+### Changes:
+* Fix access token extraction (MODOKAPFAC-11)
+
 ## Version `v2.0.2` (28.12.2024)
 ### Changes:
 * Bump dependencies Spring Boot 3.3.5, folio-spring-base 8.2.1 fixing vulns (MODOKAPFAC-13)
