@@ -23,7 +23,7 @@ class TokenUtilsTest {
   @Test
   void extractToken_positive_systemTokenExists() {
     var token = "system-token";
-    when(folioContext.getAllHeaders()).thenReturn(Map.of("X-System-Token", List.of(token)));
+    when(folioContext.getAllHeaders()).thenReturn(Map.of("x-system-token", List.of(token)));
 
     var result = TokenUtils.extractToken(folioContext);
 
@@ -51,7 +51,7 @@ class TokenUtilsTest {
   void extractToken_positive_bothTokensExist() {
     var systemToken = "system-token";
     var userToken = "user-token";
-    when(folioContext.getAllHeaders()).thenReturn(Map.of("X-System-Token", List.of(systemToken)));
+    when(folioContext.getAllHeaders()).thenReturn(Map.of("x-system-token", List.of(systemToken)));
     when(folioContext.getToken()).thenReturn(userToken);
 
     var result = TokenUtils.extractToken(folioContext);
