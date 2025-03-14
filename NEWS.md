@@ -1,3 +1,7 @@
+## Version `v3.0.0` (14.03.2025)
+### Changes:
+* Update dependencies
+---
 ## Version `v2.0.1` (16.12.2024)
 ### Changes:
 * Add support for TLS/FIPS mode (MODOKAPFAC-8)
