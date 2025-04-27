@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.4.4</version>
+    <version>3.4.5</version>
     <relativePath />
   </parent>
 
@@ -32,11 +32,11 @@
     <lombok.version>1.18.38</lombok.version>
     <swagger-annotations.version>2.2.30</swagger-annotations.version>
     <commons-lang3.version>3.17.0</commons-lang3.version>
-    <apache-commons-collections4.version>4.4</apache-commons-collections4.version>
+    <apache-commons-collections4.version>4.5.0</apache-commons-collections4.version>
     <openapi-tools.jackson-databind-nullable.version>0.2.6</openapi-tools.jackson-databind-nullable.version>
     <mapstruct.version>1.6.3</mapstruct.version>
     <hypersistence-utils-hibernate-63.version>3.8.2</hypersistence-utils-hibernate-63.version>
-    <folio-spring-support.version>9.0.1</folio-spring-support.version>
+    <folio-spring-support.version>9.1.0</folio-spring-support.version>
     <folio-java-checkstyle.version>1.1.0</folio-java-checkstyle.version>
     <applications-poc-tools.version>3.1.0-SNAPSHOT</applications-poc-tools.version>
     <coffee-boots.version>4.0.0</coffee-boots.version>
@@ -46,7 +46,7 @@
     </okapi-facade.yaml-file>
 
     <!-- Test dependencies versions -->
-    <testcontainer.version>1.20.6</testcontainer.version>
+    <testcontainer.version>1.21.0</testcontainer.version>
     <instancio.version>5.4.1</instancio.version>
     <kryo.version>5.6.0</kryo.version>
 
