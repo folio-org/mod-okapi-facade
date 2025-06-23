@@ -1,6 +1,6 @@
 # mod-okapi-facade
 
-Copyright (C) 2024 The Open Library Foundation
+Copyright (C) 2024-2025 The Open Library Foundation
 
 This software is distributed under the terms of the Apache License, Version 2.0. See the file "[LICENSE](LICENSE)" for
 more information.
@@ -12,7 +12,9 @@ more information.
 
 ## Introduction
 
-Okapi facade partially implements okapi�s interface(s) via interactions w/ manager components.
+Okapi facade partially implements okapi's interface(s) via interactions w/ manager components.
+
+The okapi facade was introduced to ease transition from okapi to Eureka for existing code which explicitly uses the okapi interface.  Modules are only doing so to obtain information; they aren't making changes in the system (Registering modules, discovery info, enabling/disable modules, etc.).  As such, the set of API endpoints implemented are limited to read-only operations.  It's discouraged writing new code which increases Folio's reliance on the Okapi facade.  It would be nice if over time we transition away from the okapi facade and eventually remove it altogether.
 
 ## Environment Variables
 
