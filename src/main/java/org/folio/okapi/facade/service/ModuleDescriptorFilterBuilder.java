@@ -125,6 +125,7 @@ final class ModuleDescriptorFilterBuilder {
    * @return true if scope and interface versions are the same or if interfaceStr is
    *     null; false otherwise.
    */
+  @SuppressWarnings("checkstyle:MethodLength")
   private static boolean interfaceCheck(List<InterfaceDescriptor> interfaces, String interfacesStr, String scope) {
     if (isEmpty(interfaces)) {
       return false;
