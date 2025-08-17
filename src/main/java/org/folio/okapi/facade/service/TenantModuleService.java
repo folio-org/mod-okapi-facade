@@ -75,6 +75,7 @@ public class TenantModuleService {
    * @param limit max number for each module (Top-N)
    * @param descriptors modules to consider (will be modified!)
    */
+  @SuppressWarnings("checkstyle:MethodLength")
   private static List<ModuleDescriptor> getLatestProducts(Integer limit, List<ModuleDescriptor> descriptors) {
     if (limit == null) {
       return descriptors;
