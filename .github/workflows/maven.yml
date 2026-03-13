@@ -21,13 +21,3 @@ jobs:
       do-sonar-scan: true
       do-docker: true
       do-maven-deploy: true
-      sonar-exclusions: >
-        src/main/java/**/domain/**/*,
-        src/main/java/**/configuration/**/*,
-        src/main/java/**/rest/resource/**/*,
-        src/main/java/**/mapper/**/*,
-        src/main/java/**/integration/**/model/**/*,
-        src/main/java/**/*Application.java,
-        src/main/java/**/*Configuration.java,
-        src/main/java/**/ModuleId.java,
-        src/main/java/**/SemVer.java
