@@ -1,3 +1,7 @@
+## Version `v3.1.0` (in progress)
+### Changes:
+* Use GitHub workflow for Maven module build (MODOKAPFAC-24)
+---
 ## Version `v3.0.0` (14.03.2025)
 ### Changes:
 * Update dependencies
