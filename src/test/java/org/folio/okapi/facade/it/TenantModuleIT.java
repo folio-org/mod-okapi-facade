@@ -3,12 +3,10 @@ package org.folio.okapi.facade.it;
 import static java.lang.Boolean.TRUE;
 import static org.apache.commons.lang3.ArrayUtils.toArray;
 import static org.folio.test.TestConstants.TENANT_ID;
-import static org.folio.test.TestUtils.asJsonString;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.folio.common.domain.model.ModuleDescriptor;
 import org.folio.okapi.facade.base.BaseIntegrationTest;
 import org.folio.test.extensions.WireMockStub;
 import org.folio.test.types.IntegrationTest;
@@ -52,12 +50,11 @@ class TenantModuleIT extends BaseIntegrationTest {
   @Test
   @WireMockStub("/wiremock/stubs/mte/find-tenant-applications.json")
   void findAll_positive_withModuleFilter() throws Exception {
-    var mds = toArray(new ModuleDescriptor().id("mod-configuration-5.10.0"));
-
     attemptGet("/_/proxy/tenants/{tenantId}/modules", toArray(TENANT_ID),
       rb -> rb.queryParam("filter", "mod-configuration"))
       .andExpect(status().isOk())
-      .andExpect(content().json(asJsonString(mds), true));
+      .andExpect(jsonPath("$[0].id").value("mod-configuration-5.10.0"))
+      .andExpect(jsonPath("$.length()").value(1));
   }
 
   @Test

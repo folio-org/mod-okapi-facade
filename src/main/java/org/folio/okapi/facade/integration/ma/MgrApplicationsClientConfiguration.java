@@ -1,14 +1,16 @@
 package org.folio.okapi.facade.integration.ma;
 
-import static org.folio.common.utils.tls.FeignClientTlsUtils.getOkHttpClient;
-
-import feign.okhttp.OkHttpClient;
+import org.folio.common.utils.tls.HttpClientTlsUtils;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestClient;
 
+@Configuration
 public class MgrApplicationsClientConfiguration {
 
   @Bean
-  public OkHttpClient feignClient(okhttp3.OkHttpClient okHttpClient, MgrApplicationsClientProperties properties) {
-    return getOkHttpClient(okHttpClient, properties.getTls());
+  public MgrApplicationsClient mgrApplicationsClient(MgrApplicationsClientProperties properties) {
+    return HttpClientTlsUtils.buildHttpServiceClient(
+      RestClient.builder(), properties.getTls(), properties.getUrl(), MgrApplicationsClient.class);
   }
 }

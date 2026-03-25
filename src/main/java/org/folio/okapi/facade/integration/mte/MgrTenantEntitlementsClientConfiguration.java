@@ -1,14 +1,16 @@
 package org.folio.okapi.facade.integration.mte;
 
-import static org.folio.common.utils.tls.FeignClientTlsUtils.getOkHttpClient;
-
-import feign.okhttp.OkHttpClient;
+import org.folio.common.utils.tls.HttpClientTlsUtils;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestClient;
 
+@Configuration
 public class MgrTenantEntitlementsClientConfiguration {
 
   @Bean
-  public OkHttpClient feignClient(okhttp3.OkHttpClient okHttpClient, MgrTenantEntitlementsProperties properties) {
-    return getOkHttpClient(okHttpClient, properties.getTls());
+  public MgrTenantEntitlementsClient mgrTenantEntitlementsClient(MgrTenantEntitlementsProperties properties) {
+    return HttpClientTlsUtils.buildHttpServiceClient(
+      RestClient.builder(), properties.getTls(), properties.getUrl(), MgrTenantEntitlementsClient.class);
   }
 }

@@ -24,8 +24,8 @@ import org.instancio.junit.InstancioExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @UnitTest
@@ -34,7 +34,7 @@ import org.springframework.test.web.servlet.MockMvc;
 class ProxyTenantModuleControllerTest {
 
   @Autowired private MockMvc mockMvc;
-  @MockBean private TenantModuleService service;
+  @MockitoBean private TenantModuleService service;
 
   @Test
   void disableTenantModule_negative_notImplemented(@Given String tenantId, @Given String moduleId) throws Exception {

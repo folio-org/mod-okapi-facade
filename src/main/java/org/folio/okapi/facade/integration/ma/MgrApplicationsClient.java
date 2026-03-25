@@ -5,17 +5,15 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import org.folio.common.domain.model.ApplicationDescriptor;
 import org.folio.common.domain.model.ResultList;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.service.annotation.HttpExchange;
 
-@FeignClient(name = "application",
-  url = "${application.ma.url}",
-  configuration = MgrApplicationsClientConfiguration.class)
+@HttpExchange(contentType = APPLICATION_JSON_VALUE)
 public interface MgrApplicationsClient {
 
-  @GetMapping(value = "/applications", consumes = APPLICATION_JSON_VALUE)
+  @GetExchange("/applications")
   ResultList<ApplicationDescriptor> queryApplicationDescriptors(
     @RequestParam("query") String query,
     @RequestParam("full") Boolean full,
