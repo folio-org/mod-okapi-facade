@@ -18,7 +18,6 @@ import lombok.extern.log4j.Log4j2;
 import org.folio.spring.integration.XOkapiHeaders;
 import org.folio.tenant.domain.dto.TenantAttributes;
 import org.folio.test.base.BaseBackendIntegrationTest;
-import org.folio.test.extensions.EnablePostgres;
 import org.folio.test.extensions.EnableWireMock;
 import org.folio.test.extensions.impl.WireMockAdminClient;
 import org.folio.test.extensions.impl.WireMockExecutionListener;
@@ -37,7 +36,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @Log4j2
-@EnablePostgres
 @EnableWireMock
 @SpringBootTest
 @ActiveProfiles("it")
