@@ -3,8 +3,6 @@ spring:
     name: mod-okapi-facade
   liquibase:
     enabled: false
-  cache:
-    type: caffeine
   jackson:
     default-property-inclusion: non_empty
     deserialization:
