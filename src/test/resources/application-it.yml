@@ -13,6 +13,10 @@ spring:
 
 application:
   environment: it-test
+  cache:
+    tenant-applications:
+      ttl: 600s
+      maximum-size: 109
 
 header:
   validation:
@@ -22,7 +26,8 @@ header:
 
 management:
   endpoints:
-    enabled-by-default: false
+    access:
+      default: none
 logging:
   level:
     org.springframework.web: debug

@@ -13,7 +13,6 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
-import feign.FeignException;
 import jakarta.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
@@ -37,19 +36,22 @@ import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @Log4j2
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class ApiExceptionHandler {
+
   /**
-   * Catches and handles all exceptions for type {@link NotFoundException} or {@link FeignException.NotFound}.
+   * Catches and handles all exceptions for type {@link NotFoundException} or
+   * {@link HttpClientErrorException.NotFound}.
    *
-   * @param exception {@link NotFoundException} / {@link FeignException.NotFound} object
+   * @param exception {@link NotFoundException} / {@link HttpClientErrorException.NotFound} object
    * @return {@link ResponseEntity} with {@link ErrorResponse} body.
    */
-  @ExceptionHandler({NotFoundException.class, FeignException.NotFound.class})
+  @ExceptionHandler({NotFoundException.class, HttpClientErrorException.NotFound.class})
   public ResponseEntity<ErrorResponse> handleEntityNotFoundException(Exception exception) {
     logException(DEBUG, exception);
     return buildResponseEntity(exception, NOT_FOUND, NOT_FOUND_ERROR);
@@ -144,7 +146,7 @@ public class ApiExceptionHandler {
     MissingRequestHeaderException.class,
     HttpMediaTypeNotSupportedException.class,
     MethodArgumentTypeMismatchException.class,
-    FeignException.BadRequest.class
+    HttpClientErrorException.BadRequest.class
   })
   public ResponseEntity<ErrorResponse> handleValidationExceptions(Exception exception) {
     logException(DEBUG, exception);

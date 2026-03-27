@@ -25,10 +25,11 @@ import org.folio.spring.exception.NotFoundException;
 import org.folio.test.types.UnitTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 
 @UnitTest
 @WebMvcTest(ApiExceptionHandlerTest.TestController.class)
@@ -45,7 +47,29 @@ import org.springframework.web.bind.annotation.RestController;
 class ApiExceptionHandlerTest {
 
   @Autowired private MockMvc mockMvc;
-  @MockBean private TestService testService;
+  @MockitoBean private TestService testService;
+
+  @Test
+  void handleEntityNotFoundException_positive_httpClientNotFound() throws Exception {
+    when(testService.getTestValue()).thenThrow(
+      HttpClientErrorException.create(HttpStatus.NOT_FOUND, "Entity not found", null, null, null));
+    mockMvc.perform(get("/tests").queryParam("query", "cql.allRecords=1").contentType(APPLICATION_JSON))
+      .andExpect(status().isNotFound())
+      .andExpect(jsonPath("$.total_records", is(1)))
+      .andExpect(jsonPath("$.errors[0].type", is(HttpClientErrorException.NotFound.class.getSimpleName())))
+      .andExpect(jsonPath("$.errors[0].code", is("not_found_error")));
+  }
+
+  @Test
+  void handleValidationExceptions_positive_httpClientBadRequest() throws Exception {
+    when(testService.getTestValue()).thenThrow(
+      HttpClientErrorException.create(HttpStatus.BAD_REQUEST, "validation error", null, null, null));
+    mockMvc.perform(get("/tests").queryParam("query", "cql.allRecords=1").contentType(APPLICATION_JSON))
+      .andExpect(status().isBadRequest())
+      .andExpect(jsonPath("$.total_records", is(1)))
+      .andExpect(jsonPath("$.errors[0].type", is(HttpClientErrorException.BadRequest.class.getSimpleName())))
+      .andExpect(jsonPath("$.errors[0].code", is("validation_error")));
+  }
 
   @Test
   void handleIntegrationException_positive() throws Exception {
@@ -225,4 +249,3 @@ class ApiExceptionHandlerTest {
     @NotNull private UUID id;
   }
 }
-

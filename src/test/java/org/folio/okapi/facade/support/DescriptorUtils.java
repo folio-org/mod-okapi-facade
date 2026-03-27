@@ -76,7 +76,9 @@ public class DescriptorUtils {
   }
 
   public static ModuleDescriptor moduleDescriptor() {
-    return Instancio.of(MODULE_DESCRIPTOR_MODEL).create();
+    var descriptor = Instancio.of(MODULE_DESCRIPTOR_MODEL).create();
+    descriptor.getProvides().forEach(providedInterface -> providedInterface.setVersion("1.0"));
+    return descriptor;
   }
 
   public static List<ModuleDescriptor> moduleDescriptors(int maxSize) {

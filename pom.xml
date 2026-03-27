@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.5.7</version>
+    <version>4.0.4</version>
     <relativePath />
   </parent>
 
@@ -27,20 +27,18 @@
 
   <properties>
     <java.version>21</java.version>
+    <argLine />
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <lombok.version>1.18.42</lombok.version>
     <swagger-annotations.version>2.2.41</swagger-annotations.version>
-    <commons-lang3.version>3.17.0</commons-lang3.version>
+    <commons-lang3.version>3.20.0</commons-lang3.version>
     <apache-commons-collections4.version>4.5.0</apache-commons-collections4.version>
     <openapi-tools.jackson-databind-nullable.version>0.2.8</openapi-tools.jackson-databind-nullable.version>
     <mapstruct.version>1.6.3</mapstruct.version>
-    <hypersistence-utils-hibernate-63.version>3.8.2</hypersistence-utils-hibernate-63.version>
-    <folio-spring-support.version>10.0.0-SNAPSHOT</folio-spring-support.version>
+    <folio-spring-support.version>10.0.0-RC1</folio-spring-support.version>
     <folio-java-checkstyle.version>1.2.0</folio-java-checkstyle.version>
-    <applications-poc-tools.version>3.1.0-SNAPSHOT</applications-poc-tools.version>
-    <coffee-boots.version>4.0.0</coffee-boots.version>
-    <jackson-bom.version>2.17.2</jackson-bom.version>
+    <applications-poc-tools.version>4.0.0-SNAPSHOT</applications-poc-tools.version>
 
     <okapi-facade.yaml-file>${project.basedir}/src/main/resources/swagger.api/okapi-facade.yaml
     </okapi-facade.yaml-file>
@@ -160,12 +158,6 @@
     </dependency>
 
     <dependency>
-      <groupId>io.github.stepio.coffee-boots</groupId>
-      <artifactId>coffee-boots</artifactId>
-      <version>${coffee-boots.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <scope>provided</scope>
@@ -220,6 +212,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.folio</groupId>
       <artifactId>folio-backend-testing</artifactId>
       <version>${applications-poc-tools.version}</version>
@@ -229,6 +227,12 @@
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>testcontainers</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -515,7 +519,7 @@
                 <interfaceOnly>true</interfaceOnly>
                 <serializableModel>true</serializableModel>
                 <useTags>true</useTags>
-                <useSpringBoot3>true</useSpringBoot3>
+                <useSpringBoot4>true</useSpringBoot4>
               </configOptions>
             </configuration>
           </execution>
