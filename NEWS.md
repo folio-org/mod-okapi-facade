@@ -1,4 +1,4 @@
-## Version `v3.1.0` (in progress)
+## Version `v4.0.0` (16.04.2026)
 ### Changes:
 * Use GitHub workflow for Maven module build (MODOKAPFAC-24)
 * Upgrade Spring Boot to 4.0.4 (MODOKAPFAC-23)
