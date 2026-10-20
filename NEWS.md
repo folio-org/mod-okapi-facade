@@ -1,3 +1,7 @@
+## Version `v4.0.1` (20.10.2026)
+### Changes:
+* Trillium CSP#1 - Upgrade to SpringBoot 4.1 (MODOKAPFAC-29)
+---
 ## Version `v4.0.0` (16.04.2026)
 ### Changes:
 * Use GitHub workflow for Maven module build (MODOKAPFAC-24)
