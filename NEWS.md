@@ -1,3 +1,7 @@
+## Version `v4.1.0` (In Progress)
+### Changes:
+* Add DeployConfig.json following ADR-0013 module configuration management (MODOKAPFAC-26)
+---
 ## Version `v4.0.0` (16.04.2026)
 ### Changes:
 * Use GitHub workflow for Maven module build (MODOKAPFAC-24)
