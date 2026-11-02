@@ -1,0 +1,261 @@
+{
+  "_disclaimer": "Default values are calibrated against a reference bugfest environment. See ADR-0013 (Module configuration management) for the governance model behind this file. Resource values and JVM limits must be adjusted to the target host capacity.",
+  "description": "mod-okapi-facade configuration template",
+  "moduleDefaults": {
+    "resources": [
+      {
+        "name": "cpu",
+        "value": "64",
+        "description": "CPU request/limit for the mod-okapi-facade container"
+      },
+      {
+        "name": "memory",
+        "value": "512",
+        "description": "Memory hard limit for the mod-okapi-facade container in MiB"
+      },
+      {
+        "name": "memoryReservation",
+        "value": "448",
+        "description": "Memory reservation (soft limit) for the mod-okapi-facade container in MiB"
+      }
+    ],
+    "java": [
+      {
+        "name": "xmx",
+        "value": "256m",
+        "description": "Maximum Java heap size"
+      },
+      {
+        "name": "MaxMetaspaceSize",
+        "value": "128m",
+        "description": "Maximum Java metaspace size"
+      },
+      {
+        "name": "MetaspaceSize",
+        "value": "88m",
+        "description": "Initial Java metaspace size"
+      }
+    ],
+    "deployment": {
+      "isHaSupported": true,
+      "replicasRecommendedCount": 2,
+      "description": "mod-okapi-facade is stateless: it has no database, messaging or scheduled-job state and only translates read-only Okapi API calls into requests to mgr-applications, mgr-tenant-entitlements and mgr-tenants. Replicas are independent; the only local state is a per-replica tenant-applications cache. Two replicas are recommended for availability."
+    },
+    "kong": {
+      "timeouts": {
+        "connect": "60s",
+        "send": "60s",
+        "read": "60s"
+      },
+      "description": "Default Kong proxy timeouts are sufficient; requests are synchronous pass-through calls to the manager modules."
+    },
+    "EnvVars": [
+      {
+        "name": "ENV",
+        "value": "folio",
+        "description": "Logical deployment name; must match the value used by the other modules",
+        "type": "CONFIG",
+        "essential": true
+      },
+      {
+        "name": "JAVA_OPTIONS",
+        "value": null,
+        "description": "Additional JVM options for the mod-okapi-facade process (heap sizing, GC, agent flags, etc.)",
+        "type": "CONFIG",
+        "essential": true
+      },
+      {
+        "name": "SERVER_PORT",
+        "value": "8081",
+        "description": "HTTP port the module listens on",
+        "type": "CONFIG",
+        "essential": false
+      },
+      {
+        "name": "AM_CLIENT_URL",
+        "value": "http://mgr-applications:8081",
+        "description": "Base URL of mgr-applications, used to resolve application and module descriptors",
+        "type": "CONFIG",
+        "essential": true
+      },
+      {
+        "name": "AM_CLIENT_TLS_ENABLED",
+        "value": "false",
+        "description": "Enables TLS for the mgr-applications client",
+        "type": "CONFIG",
+        "essential": false
+      },
+      {
+        "name": "AM_CLIENT_TLS_TRUSTSTORE_PATH",
+        "value": null,
+        "description": "Truststore file path for the mgr-applications client. Required when AM_CLIENT_TLS_ENABLED is true",
+        "type": "CONFIG",
+        "essential": false
+      },
+      {
+        "name": "AM_CLIENT_TLS_TRUSTSTORE_PASSWORD",
+        "value": null,
+        "description": "Truststore password for the mgr-applications client",
+        "type": "CONFIG",
+        "essential": false
+      },
+      {
+        "name": "AM_CLIENT_TLS_TRUSTSTORE_TYPE",
+        "value": null,
+        "description": "Truststore file type for the mgr-applications client (e.g. JKS, PKCS12)",
+        "type": "CONFIG",
+        "essential": false
+      },
+      {
+        "name": "TE_URL",
+        "value": "http://mgr-tenant-entitlements:8081",
+        "description": "Base URL of mgr-tenant-entitlements, used to resolve the applications entitled for a tenant",
+        "type": "CONFIG",
+        "essential": true
+      },
+      {
+        "name": "TE_TLS_ENABLED",
+        "value": "false",
+        "description": "Enables TLS for the mgr-tenant-entitlements client",
+        "type": "CONFIG",
+        "essential": false
+      },
+      {
+        "name": "TE_TLS_TRUSTSTORE_PATH",
+        "value": null,
+        "description": "Truststore file path for the mgr-tenant-entitlements client. Required when TE_TLS_ENABLED is true",
+        "type": "CONFIG",
+        "essential": false
+      },
+      {
+        "name": "TE_TLS_TRUSTSTORE_PASSWORD",
+        "value": null,
+        "description": "Truststore password for the mgr-tenant-entitlements client",
+        "type": "CONFIG",
+        "essential": false
+      },
+      {
+        "name": "TE_TLS_TRUSTSTORE_TYPE",
+        "value": null,
+        "description": "Truststore file type for the mgr-tenant-entitlements client (e.g. JKS, PKCS12)",
+        "type": "CONFIG",
+        "essential": false
+      },
+      {
+        "name": "MT_CLIENT_URL",
+        "value": "http://mgr-tenants:8081",
+        "description": "Base URL of mgr-tenants, used to resolve tenant details",
+        "type": "CONFIG",
+        "essential": true
+      },
+      {
+        "name": "MT_CLIENT_TLS_ENABLED",
+        "value": "false",
+        "description": "Enables TLS for the mgr-tenants client",
+        "type": "CONFIG",
+        "essential": false
+      },
+      {
+        "name": "MT_CLIENT_TLS_TRUSTSTORE_PATH",
+        "value": null,
+        "description": "Truststore file path for the mgr-tenants client. Required when MT_CLIENT_TLS_ENABLED is true",
+        "type": "CONFIG",
+        "essential": false
+      },
+      {
+        "name": "MT_CLIENT_TLS_TRUSTSTORE_PASSWORD",
+        "value": null,
+        "description": "Truststore password for the mgr-tenants client",
+        "type": "CONFIG",
+        "essential": false
+      },
+      {
+        "name": "MT_CLIENT_TLS_TRUSTSTORE_TYPE",
+        "value": null,
+        "description": "Truststore file type for the mgr-tenants client (e.g. JKS, PKCS12)",
+        "type": "CONFIG",
+        "essential": false
+      },
+      {
+        "name": "TENANT_APPS_TTL",
+        "value": "600s",
+        "description": "Time to live of the cached tenant-enabled applications",
+        "type": "CACHE",
+        "essential": false
+      }
+    ]
+  },
+  "sidecarDefaults": {
+    "resources": [
+      {
+        "name": "cpu",
+        "value": "64",
+        "description": "CPU request/limit for the sidecar container"
+      },
+      {
+        "name": "memory",
+        "value": "1024",
+        "description": "Memory hard limit for the sidecar container, in MB"
+      },
+      {
+        "name": "memoryReservation",
+        "value": "512",
+        "description": "Memory reservation for the sidecar container, in MB"
+      }
+    ],
+    "java": [
+      {
+        "name": "xms",
+        "value": "128m",
+        "description": "Initial Java heap size"
+      },
+      {
+        "name": "xmx",
+        "value": "256m",
+        "description": "Maximum Java heap size"
+      },
+      {
+        "name": "MaxMetaspaceSize",
+        "value": "96m",
+        "description": "Maximum Java metaspace size"
+      }
+    ],
+    "EnvVars": [
+      {
+        "name": "ENV",
+        "value": null,
+        "description": "Deployment environment identifier",
+        "type": "CONFIG",
+        "essential": false
+      },
+      {
+        "name": "JAVA_OPTS",
+        "value": null,
+        "description": "Additional JVM options for the sidecar process",
+        "type": "CONFIG",
+        "essential": true
+      },
+      {
+        "name": "MODULE_NAME",
+        "value": "mod-okapi-facade",
+        "description": "Name of the backend module the sidecar fronts",
+        "type": "CONFIG",
+        "essential": true
+      },
+      {
+        "name": "MODULE_URL",
+        "value": null,
+        "description": "Internal URL (host:port) at which the mod-okapi-facade backend container is reachable from its sidecar",
+        "type": "CONFIG",
+        "essential": true
+      },
+      {
+        "name": "MODULE_VERSION",
+        "value": null,
+        "description": "Version of the mod-okapi-facade module deployed alongside this sidecar",
+        "type": "CONFIG",
+        "essential": true
+      }
+    ]
+  }
+}
